@@ -1,18 +1,12 @@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import type { RackSummary } from '@/interfaces/rack-summary';
-import { formatDate, statusLabels } from '../utils';
+import { badgeVariants, statusLabels } from '@/lib/rack-status';
+import { formatDate } from '../utils';
 
 interface Props {
   summary: RackSummary;
 }
-
-const badgeVariants = {
-  normal: 'normal',
-  warning: 'warning',
-  alarm: 'danger',
-  offline: 'outline',
-} as const;
 
 export const RackCard = ({ summary }: Props) => {
   const { rack, status, latest, lastImpact } = summary;

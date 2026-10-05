@@ -12,7 +12,7 @@ const statuses: RackStatus[] = ['normal', 'warning', 'alarm', 'offline'];
 export const Filters = ({ summaries }: Props) => {
   return (
     <div className="flex items-center justify-between">
-      <Input placeholder="Nombre o ubicación" className="w-64" />
+      <Input placeholder="Buscar rack, ubicación o nodo" className="w-64" />
       <div className="flex items-center gap-2">
         <Button>Todos ({summaries.length})</Button>
         {statuses.map((status) => (

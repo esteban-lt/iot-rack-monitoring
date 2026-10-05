@@ -1,5 +1,5 @@
 import type { RackSummary } from '@/interfaces/rack-summary';
-import { countByStatus } from '../utils';
+import { countByStatus } from '@/lib/rack-status';
 import { SummaryCard } from './summary-card';
 
 interface Props {
