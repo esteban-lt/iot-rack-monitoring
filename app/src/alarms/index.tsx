@@ -1,6 +1,15 @@
+import { Filters } from './components/filters';
+import { columns } from './components/data-table/columns';
+import { DataTable } from './components/data-table/data-table';
+import { alarms } from './data';
+
 const Index = () => {
   return (
-    <h1>Alarmas</h1>
+    <>
+      <Filters alarms={alarms} />
+
+      <DataTable columns={columns} data={alarms} />
+    </>
   );
 }
 
