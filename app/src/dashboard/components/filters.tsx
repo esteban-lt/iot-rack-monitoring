@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { RackStatus, RackSummary } from '@/interfaces/rack-summary';
-import { countByStatus, statusLabels } from '../utils';
+import { countByStatus, statusLabels } from '@/lib/rack-status';
 
 interface Props {
   summaries: RackSummary[];
