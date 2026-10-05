@@ -1,6 +1,6 @@
-export type AlarmType = 'tilt' | 'impact' | 'offline';
-export type AlarmSeverity = 'warning' | 'critical';
-export type AlarmStatus = 'active' | 'acknowledged' | 'cleared';
+export type AlarmType = 'high-tilt' | 'critical-tilt' | 'impact' | 'offline';
+export type AlarmSeverity = 'warning' | 'major' | 'critical';
+export type AlarmStatus = 'active-unack' | 'active-ack' | 'cleared-unack' | 'cleared-ack';
 
 export interface Alarm {
   id: string;
@@ -9,6 +9,7 @@ export interface Alarm {
   type: AlarmType;
   severity: AlarmSeverity;
   status: AlarmStatus;
+  value?: number;
   createdTs: number;
   ackTs?: number;
   clearTs?: number;
