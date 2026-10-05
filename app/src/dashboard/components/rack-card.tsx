@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import type { RackSummary } from '@/interfaces/rack-summary';
 import { badgeVariants, statusLabels } from '@/lib/rack-status';
-import { formatDate } from '../utils';
+import { formatDate } from '@/lib/utils';
 
 interface Props {
   summary: RackSummary;
