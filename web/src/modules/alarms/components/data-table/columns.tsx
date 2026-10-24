@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { Alarm } from '@/interfaces/alarm';
 import { formatDate } from '@/lib/utils';
-import { isActive, isUnack, severityLabels, severityVariants, typeLabels, typeUnits } from '../../utils';
+import { isActive, isUnack, severityLabels, severityVariants } from '../../utils';
 import { type DataTableFeatures } from './data-table-features';
 
 const columnHelper = createColumnHelper<DataTableFeatures, Alarm>();
@@ -13,16 +13,12 @@ export const columns = columnHelper.columns([
     header: 'Fecha y hora',
     cell: (info) => formatDate(info.getValue()),
   }),
-  columnHelper.accessor('rackId', {
+  columnHelper.accessor('rackName', {
     header: 'Rack',
     cell: (info) => <span className="font-bold">{info.getValue()}</span>,
   }),
   columnHelper.accessor('type', {
     header: 'Tipo',
-    cell: ({ row }) => {
-      const { type, value } = row.original;
-      return value ? `${typeLabels[type]} · ${value}${typeUnits[type]}` : typeLabels[type];
-    },
   }),
   columnHelper.accessor('severity', {
     header: 'Severidad',

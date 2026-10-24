@@ -1,8 +1,8 @@
 import type { NodeSummary } from '@/interfaces/node-summary';
 import type { NodeStatus, TelemetrySample } from '@/interfaces/telemetry-sample';
 import { toAttributes } from '@/lib/to-attributes';
-import { rackApi } from '@/modules/racks/api/rack-api';
 import { deviceApi } from '../api/device-api';
+import { getAssignedRackAction } from './get-assigned-rack-action';
 import type { GetLatestTelemetryResponse } from '../interfaces/get-latest-telemetry-response';
 
 const TELEMETRY_KEYS = ['status', 'rssi', 'tilt', 'tilt_x', 'tilt_y', 'vib_rms', 'ax', 'ay', 'az', 'temp_c'];
@@ -30,18 +30,6 @@ const toTelemetrySample = (telemetry: GetLatestTelemetryResponse): TelemetrySamp
   };
 }
 
-const getAssignedRack = async (deviceId: string) => {
-  const [relation] = await deviceApi.getAssignedRacks(deviceId);
-  if (!relation) return undefined;
-
-  const attributes = await rackApi.getAttributes(relation.from.id, ['rack_name']);
-
-  return {
-    rackId: relation.from.id,
-    rackName: String(toAttributes(attributes).rack_name ?? relation.fromName ?? ''),
-  };
-}
-
 export const getDevicesAction = async (pageSize: number = 50, page: number = 0): Promise<NodeSummary[]> => {
   const validatedPageSize = (pageSize > 0) ? pageSize : 50;
   const validatedPage = (page >= 0) ? page : 0;
@@ -52,7 +40,7 @@ export const getDevicesAction = async (pageSize: number = 50, page: number = 0):
     devices.data.map(async (device): Promise<NodeSummary> => {
       const [attributes, rack] = await Promise.all([
         deviceApi.getAttributes(device.id.id, ['active', 'lastActivityTime', 'mac', 'ip', 'firmware_version']),
-        getAssignedRack(device.id.id),
+        getAssignedRackAction(device.id.id),
       ]);
 
       const attribute = toAttributes(attributes);

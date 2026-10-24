@@ -1,29 +1,19 @@
-import type { Alarm, AlarmSeverity, AlarmType } from '@/interfaces/alarm';
-
-export const typeLabels: Record<AlarmType, string> = {
-  'high-tilt': 'Inclinación alta',
-  'critical-tilt': 'Inclinación crítica',
-  impact: 'Impacto detectado',
-  offline: 'Nodo sin conexión',
-};
-
-export const typeUnits: Record<AlarmType, string> = {
-  'high-tilt': '°',
-  'critical-tilt': '°',
-  impact: ' g',
-  offline: '',
-};
+import type { Alarm, AlarmSeverity } from '@/interfaces/alarm';
 
 export const severityLabels: Record<AlarmSeverity, string> = {
-  warning: 'Advertencia',
-  major: 'Mayor',
   critical: 'Crítica',
+  major: 'Mayor',
+  minor: 'Menor',
+  warning: 'Advertencia',
+  indeterminate: 'Indeterminada',
 };
 
 export const severityVariants = {
-  warning: 'secondary',
-  major: 'warning',
   critical: 'danger',
+  major: 'warning',
+  minor: 'secondary',
+  warning: 'secondary',
+  indeterminate: 'outline',
 } as const;
 
 export const isActive = (alarm: Alarm) => alarm.status.startsWith('active');
