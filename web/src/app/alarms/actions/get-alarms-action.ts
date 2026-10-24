@@ -1,6 +1,6 @@
 import { endOfDay, startOfDay } from 'date-fns';
 import type { Alarm, AlarmSeverity, AlarmStatus } from '@/interfaces/alarm';
-import { getAssignedRackAction } from '@/modules/devices/actions/get-assigned-rack-action';
+import { getAssignedRackAction } from '@/app/devices/actions/get-assigned-rack-action';
 import { alarmApi } from '../api/alarm-api';
 import type { AlarmFilters } from '../interfaces/alarm-filters';
 

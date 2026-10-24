@@ -2,7 +2,7 @@ import { thingsboardClient } from '@/services/api/thingsboard-client';
 import type { GetAttributesResponse } from '../interfaces/get-attributes-response';
 import type { GetDevicesResponse } from '../interfaces/get-devices-response';
 import type { GetLatestTelemetryResponse } from '../interfaces/get-latest-telemetry-response';
-import type { GetRelationsResponse } from '@/modules/racks/interfaces/get-relations-response';
+import type { GetRelationsResponse } from '@/app/racks/interfaces/get-relations-response';
 
 export const deviceApi = {
   getDevices: async (pageSize: number = 50, page: number = 0): Promise<GetDevicesResponse> => {

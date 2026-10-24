@@ -1,8 +1,8 @@
 import type { ImpactEvent } from '@/interfaces/impact-event';
 import type { RackSummary } from '@/interfaces/rack-summary';
-import { getLatestTelemetrySampleAction } from '@/modules/devices/actions/get-latest-telemetry-sample-action';
-import { deviceApi } from '@/modules/devices/api/device-api';
-import { getRacksAction } from '@/modules/racks/actions/get-racks-action';
+import { getLatestTelemetrySampleAction } from '@/app/devices/actions/get-latest-telemetry-sample-action';
+import { deviceApi } from '@/app/devices/api/device-api';
+import { getRacksAction } from '@/app/racks/actions/get-racks-action';
 
 const getLastImpact = async (nodeId: string): Promise<ImpactEvent | undefined> => {
   const telemetry = await deviceApi.getLatestTelemetry(nodeId, ['impact_g']);

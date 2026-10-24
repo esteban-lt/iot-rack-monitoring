@@ -1,5 +1,5 @@
 import { toAttributes } from '@/lib/to-attributes';
-import { rackApi } from '@/modules/racks/api/rack-api';
+import { rackApi } from '@/app/racks/api/rack-api';
 import { deviceApi } from '../api/device-api';
 
 export const getAssignedRackAction = async (deviceId: string) => {

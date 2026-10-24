@@ -1,7 +1,7 @@
 import type { RackStatus, RackSummary } from '@/interfaces/rack-summary';
 import { rackApi } from '../api/rack-api';
 import { toAttributes } from '@/lib/to-attributes';
-import { deviceApi } from '@/modules/devices/api/device-api';
+import { deviceApi } from '@/app/devices/api/device-api';
 
 const VALID_STATUSES: RackStatus[] = ['ok', 'warning', 'alarm', 'offline'];
 
