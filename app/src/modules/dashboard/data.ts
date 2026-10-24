@@ -34,20 +34,20 @@ export const summaries: RackSummary[] = [
   },
   {
     rack: { id: 'a-01', name: 'A-01', location: 'Pasillo A', nodeId: 'Nodo-01' },
-    status: 'normal',
-    latest: sample(0.8, 0.03, 'normal', 1),
+    status: 'ok',
+    latest: sample(0.8, 0.03, 'ok', 1),
     activeAlarms: 0,
   },
   {
     rack: { id: 'a-02', name: 'A-02', location: 'Pasillo A', nodeId: 'Nodo-02' },
-    status: 'normal',
-    latest: sample(1.2, 0.04, 'normal', 2),
+    status: 'ok',
+    latest: sample(1.2, 0.04, 'ok', 2),
     activeAlarms: 0,
   },
   {
     rack: { id: 'c-01', name: 'C-01', location: 'Pasillo C', nodeId: 'Nodo-05' },
-    status: 'normal',
-    latest: sample(0.5, 0.02, 'normal', 1),
+    status: 'ok',
+    latest: sample(0.5, 0.02, 'ok', 1),
     activeAlarms: 0,
   },
   {

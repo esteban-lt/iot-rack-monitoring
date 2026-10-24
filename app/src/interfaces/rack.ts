@@ -4,4 +4,5 @@ export interface Rack {
   location: string;
   rfidUid?: string;
   nodeId?: string;
+  nodeName?: string;
 }

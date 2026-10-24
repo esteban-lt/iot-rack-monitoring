@@ -1,12 +1,12 @@
 import { createBrowserRouter } from 'react-router';
 
 import AppLayout from '@/layouts/app-layout';
-import DashboardPage from '@/dashboard';
+import DashboardPage from '@/modules/dashboard';
 import { lazy } from 'react';
 
-const RacksPage = lazy(() => import('@/racks'));
-const DevicesPage = lazy(() => import('@/devices'));
-const AlarmsPage = lazy(() => import('@/alarms'));
+const RacksPage = lazy(() => import('@/modules/racks'));
+const DevicesPage = lazy(() => import('@/modules/devices'));
+const AlarmsPage = lazy(() => import('@/modules/alarms'));
 
 export const router = createBrowserRouter([
   {

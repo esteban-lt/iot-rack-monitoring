@@ -1,4 +1,4 @@
-export type NodeStatus = 'normal' | 'warning' | 'alarm';
+export type NodeStatus = 'ok' | 'warning' | 'alarm';
 
 export interface TelemetrySample {
   ts: number;
