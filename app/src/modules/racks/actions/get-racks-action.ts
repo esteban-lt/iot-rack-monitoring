@@ -1,5 +1,6 @@
 import type { RackStatus, RackSummary } from '@/interfaces/rack-summary';
 import { rackApi } from '../api/rack-api';
+import { toAttributes } from '@/lib/to-attributes';
 import { deviceApi } from '@/modules/devices/api/device-api';
 
 const VALID_STATUSES: RackStatus[] = ['ok', 'warning', 'alarm', 'offline'];
@@ -8,10 +9,6 @@ const resolveRackStatus = (rawStatus: string | undefined, isActive: unknown): Ra
   if (isActive !== true) return 'offline';
   if (VALID_STATUSES.includes(rawStatus as RackStatus)) return rawStatus as RackStatus;
   return 'offline';
-}
-
-const toAttributes = (attributes: { key: string; value: unknown }[]) => {
-  return Object.fromEntries(attributes.map((attribute) => [attribute.key, attribute.value]));
 }
 
 const getNodeStatus = async (nodeId: string): Promise<RackStatus> => {

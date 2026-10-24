@@ -3,6 +3,7 @@ export interface GetRelationsResponse {
   to:        EntityID;
   type:      string;
   typeGroup: string;
+  fromName:  string | null;
   toName:    string | null;
 }
 
