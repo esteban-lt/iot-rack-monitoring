@@ -22,8 +22,8 @@ export const columns = columnHelper.columns([
     header: 'UID del tag RFID',
     cell: (info) => <span className="font-mono">{info.getValue()}</span>,
   }),
-  columnHelper.accessor((row) => row.rack.nodeId, {
-    id: 'nodeId',
+  columnHelper.accessor((row) => row.rack.nodeName, {
+    id: 'nodeName',
     header: 'Nodo asignado',
   }),
   columnHelper.accessor('status', {
