@@ -1,5 +1,8 @@
+import { CalendarIcon } from 'lucide-react';
+import { es } from 'react-day-picker/locale';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
@@ -7,11 +10,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { Alarm } from '@/interfaces/alarm';
+import type { RackSummary } from '@/interfaces/rack-summary';
+import type { AlarmFilters } from '../interfaces/alarm-filters';
 import { severityLabels } from '../utils';
 
 interface Props {
-  alarms: Alarm[];
+  racks: RackSummary[];
+  filters: AlarmFilters;
+  onFiltersChange: (filters: AlarmFilters) => void;
 }
 
 const severityItems = [
@@ -26,17 +32,27 @@ const statusItems = [
   { value: 'cleared', label: 'Limpiadas' },
 ];
 
-export const Filters = ({ alarms }: Props) => {
+const formatDay = (date: Date) => date.toLocaleDateString('es');
+
+export const Filters = ({ racks, filters, onFiltersChange }: Props) => {
+  const { severity, status, nodeId, dateRange } = filters;
+
+  const update = (changes: Partial<AlarmFilters>) => onFiltersChange({ ...filters, ...changes });
+
   const rackItems = [
     { value: 'all', label: 'Todos los racks' },
-    ...[...new Set(alarms.map((alarm) => alarm.rackId))]
-      .filter((rackId) => rackId)
-      .map((rackId) => ({ value: rackId!, label: rackId! })),
+    ...racks
+      .filter(({ rack }) => rack.nodeId)
+      .map(({ rack }) => ({ value: rack.nodeId!, label: rack.name })),
   ];
 
+  const dateRangeLabel = dateRange?.from
+    ? [dateRange.from, dateRange.to].filter((date) => date).map((date) => formatDay(date!)).join(' - ')
+    : 'Rango de fechas';
+
   return (
-    <div className="flex items-center gap-2">
-      <Select items={severityItems} defaultValue="all">
+    <div className="flex flex-wrap items-center gap-2">
+      <Select items={severityItems} value={severity} onValueChange={(value) => update({ severity: value as AlarmFilters['severity'] })}>
         <SelectTrigger>
           <SelectValue />
         </SelectTrigger>
@@ -46,7 +62,7 @@ export const Filters = ({ alarms }: Props) => {
           ))}
         </SelectContent>
       </Select>
-      <Select items={rackItems} defaultValue="all">
+      <Select items={rackItems} value={nodeId} onValueChange={(value) => update({ nodeId: value! })}>
         <SelectTrigger>
           <SelectValue />
         </SelectTrigger>
@@ -56,7 +72,7 @@ export const Filters = ({ alarms }: Props) => {
           ))}
         </SelectContent>
       </Select>
-      <Select items={statusItems} defaultValue="all">
+      <Select items={statusItems} value={status} onValueChange={(value) => update({ status: value as AlarmFilters['status'] })}>
         <SelectTrigger>
           <SelectValue />
         </SelectTrigger>
@@ -66,9 +82,16 @@ export const Filters = ({ alarms }: Props) => {
           ))}
         </SelectContent>
       </Select>
-      <Input type="date" className="w-40" />
-      <Input type="date" className="w-40" />
-      <Button>Aplicar filtros</Button>
+      <Popover>
+        <PopoverTrigger render={<Button variant="outline" />}>
+          <CalendarIcon data-icon="inline-start" />
+          {dateRangeLabel}
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0">
+          <Calendar mode="range" locale={es} selected={dateRange} onSelect={(range) => update({ dateRange: range })} />
+        </PopoverContent>
+      </Popover>
+      {dateRange && <Button variant="ghost" onClick={() => update({ dateRange: undefined })}>Limpiar fechas</Button>}
     </div>
   );
 }
