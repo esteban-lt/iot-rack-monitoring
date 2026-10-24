@@ -1,34 +1,8 @@
 import type { NodeSummary } from '@/interfaces/node-summary';
-import type { NodeStatus, TelemetrySample } from '@/interfaces/telemetry-sample';
 import { toAttributes } from '@/lib/to-attributes';
 import { deviceApi } from '../api/device-api';
 import { getAssignedRackAction } from './get-assigned-rack-action';
-import type { GetLatestTelemetryResponse } from '../interfaces/get-latest-telemetry-response';
-
-const TELEMETRY_KEYS = ['status', 'rssi', 'tilt', 'tilt_x', 'tilt_y', 'vib_rms', 'ax', 'ay', 'az', 'temp_c'];
-
-const VALID_STATUSES: NodeStatus[] = ['ok', 'warning', 'alarm'];
-
-const toTelemetrySample = (telemetry: GetLatestTelemetryResponse): TelemetrySample | undefined => {
-  const status = telemetry.status?.[0];
-  if (!status || !VALID_STATUSES.includes(status.value as NodeStatus)) return undefined;
-
-  const valueOf = (key: string) => Number(telemetry[key]?.[0]?.value ?? 0);
-
-  return {
-    ts: status.ts,
-    tilt: valueOf('tilt'),
-    tiltX: valueOf('tilt_x'),
-    tiltY: valueOf('tilt_y'),
-    vibRms: valueOf('vib_rms'),
-    accelX: valueOf('ax'),
-    accelY: valueOf('ay'),
-    accelZ: valueOf('az'),
-    tempC: valueOf('temp_c'),
-    rssi: valueOf('rssi'),
-    status: status.value as NodeStatus,
-  };
-}
+import { getLatestTelemetrySampleAction } from './get-latest-telemetry-sample-action';
 
 export const getDevicesAction = async (pageSize: number = 50, page: number = 0): Promise<NodeSummary[]> => {
   const validatedPageSize = (pageSize > 0) ? pageSize : 50;
@@ -45,7 +19,6 @@ export const getDevicesAction = async (pageSize: number = 50, page: number = 0):
 
       const attribute = toAttributes(attributes);
       const isActive = attribute.active === true;
-      const telemetry = isActive ? await deviceApi.getLatestTelemetry(device.id.id, TELEMETRY_KEYS) : undefined;
 
       return {
         node: {
@@ -58,7 +31,7 @@ export const getDevicesAction = async (pageSize: number = 50, page: number = 0):
           lastActivityTs: attribute.lastActivityTime ? Number(attribute.lastActivityTime) : undefined,
           ...rack,
         },
-        latest: telemetry && toTelemetrySample(telemetry),
+        latest: isActive ? await getLatestTelemetrySampleAction(device.id.id) : undefined,
       };
     }),
   );

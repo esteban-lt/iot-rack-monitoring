@@ -26,7 +26,7 @@ export const RackCard = ({ summary }: Props) => {
           Último impacto: {lastImpact ? `${formatDate(lastImpact.ts)} | ${lastImpact.impactG} g` : 'sin registros recientes'}
         </p>
         <p className="text-xs font-light">
-          {latest ? `Vibración: ${latest.vibRms.toFixed(2)} g | ${rack.nodeId}` : `${rack.nodeId} sin enviar datos`}
+          {latest ? `Vibración: ${latest.vibRms.toFixed(2)} g | ${rack.nodeName}` : `${rack.nodeName} sin enviar datos`}
         </p>
         {latest && <p className="text-xs font-light">Actualizado: {formatDate(latest.ts)}</p>}
       </CardContent>
