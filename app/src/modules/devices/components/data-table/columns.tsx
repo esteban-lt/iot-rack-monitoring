@@ -15,15 +15,17 @@ export const columns = columnHelper.columns([
   columnHelper.accessor((row) => row.node.mac, {
     id: 'mac',
     header: 'MAC',
-    cell: (info) => <span className="font-mono">{info.getValue()}</span>,
+    cell: (info) => <span className="font-mono">{info.getValue() ?? '—'}</span>,
   }),
   columnHelper.accessor((row) => row.node.firmwareVersion, {
     id: 'firmwareVersion',
     header: 'Firmware',
+    cell: (info) => info.getValue() ?? '—',
   }),
   columnHelper.accessor((row) => row.node.ip, {
     id: 'ip',
     header: 'IP',
+    cell: (info) => info.getValue() ?? '—',
   }),
   columnHelper.accessor((row) => row.latest?.rssi, {
     id: 'rssi',
@@ -35,8 +37,8 @@ export const columns = columnHelper.columns([
     header: 'Último dato',
     cell: (info) => (info.getValue() ? formatDate(info.getValue()!) : '—'),
   }),
-  columnHelper.accessor((row) => row.node.rackId, {
-    id: 'rackId',
+  columnHelper.accessor((row) => row.node.rackName, {
+    id: 'rackName',
     header: 'Rack asignado',
     cell: (info) => info.getValue() ?? <span className="font-bold">Sin asignar</span>,
   }),
