@@ -1,14 +1,14 @@
 import type { RackStatus, RackSummary } from '@/interfaces/rack-summary';
 
 export const statusLabels: Record<RackStatus, string> = {
-  normal: 'Normal',
+  ok: 'Normal',
   warning: 'Advertencia',
   alarm: 'Alarma',
   offline: 'Sin conexión',
 };
 
 export const badgeVariants = {
-  normal: 'normal',
+  ok: 'normal',
   warning: 'warning',
   alarm: 'danger',
   offline: 'outline',

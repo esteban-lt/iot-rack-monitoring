@@ -9,7 +9,7 @@ interface Props {
 export const Summary = ({ summaries }: Props) => {
   return (
     <div className="grid grid-cols-4 gap-4">
-      <SummaryCard title="Normales" content={countByStatus(summaries, 'normal')} />
+      <SummaryCard title="Normales" content={countByStatus(summaries, 'ok')} />
       <SummaryCard title="En advertencia" content={countByStatus(summaries, 'warning')} />
       <SummaryCard title="En alarma" content={countByStatus(summaries, 'alarm')} />
       <SummaryCard title="Sin conexión" content={countByStatus(summaries, 'offline')} />

@@ -7,7 +7,7 @@ interface Props {
   summaries: RackSummary[];
 }
 
-const statuses: RackStatus[] = ['normal', 'warning', 'alarm', 'offline'];
+const statuses: RackStatus[] = ['ok', 'warning', 'alarm', 'offline'];
 
 export const Filters = ({ summaries }: Props) => {
   return (

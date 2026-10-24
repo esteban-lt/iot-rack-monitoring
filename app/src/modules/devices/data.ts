@@ -14,7 +14,7 @@ const sample = (rssi: number, secondsAgo: number): TelemetrySample => ({
   accelZ: 1,
   tempC: 24,
   rssi,
-  status: 'normal',
+  status: 'ok',
 });
 
 export const summaries: NodeSummary[] = [
