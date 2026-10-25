@@ -1,0 +1,49 @@
+import { createColumnHelper } from '@tanstack/react-table';
+import { Badge } from '@/components/ui/badge';
+import type { Alarm } from '@/interfaces/alarm';
+import { formatDate } from '@/lib/utils';
+import { isActive, isUnack, severityLabels, severityVariants } from '../../utils';
+import { AcknowledgeButton } from '../acknowledge-button';
+import { type DataTableFeatures } from './data-table-features';
+
+const columnHelper = createColumnHelper<DataTableFeatures, Alarm>();
+
+export const columns = columnHelper.columns([
+  columnHelper.accessor('createdTs', {
+    header: 'Fecha y hora',
+    cell: (info) => formatDate(info.getValue()),
+  }),
+  columnHelper.accessor('rackName', {
+    id: 'rackName',
+    header: 'Rack',
+    cell: (info) => <span className="font-bold">{info.getValue()}</span>,
+  }),
+  columnHelper.accessor('type', {
+    header: 'Tipo',
+  }),
+  columnHelper.accessor('severity', {
+    header: 'Severidad',
+    cell: (info) => (
+      <Badge variant={severityVariants[info.getValue()]}>
+        {severityLabels[info.getValue()]}
+      </Badge>
+    ),
+  }),
+  columnHelper.accessor('status', {
+    header: 'Estado',
+    cell: ({ row }) => (
+      <div className="flex items-center gap-2">
+        <Badge variant="outline">{isActive(row.original) ? 'Activa' : 'Limpiada'}</Badge>
+        {isUnack(row.original) && <Badge variant="warning">Sin reconocer</Badge>}
+      </div>
+    ),
+  }),
+  columnHelper.display({
+    id: 'actions',
+    header: 'Acción',
+    cell: ({ row }) =>
+      isUnack(row.original) && <AcknowledgeButton alarmId={row.original.id} />,
+  }),
+]);
+
+export const columnsWithoutRack = columns.filter((column) => column.id !== 'rackName');

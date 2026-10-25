@@ -1,0 +1,49 @@
+import type { RackStatus, RackSummary } from '@/interfaces/rack-summary';
+import { rackApi } from '../api/rack-api';
+import { toAttributes } from '@/lib/to-attributes';
+import { deviceApi } from '@/app/devices/api/device-api';
+import type { Data as Asset } from '../interfaces/get-assets-response';
+
+const VALID_STATUSES: RackStatus[] = ['ok', 'warning', 'alarm', 'offline'];
+
+const resolveRackStatus = (rawStatus: string | undefined, isActive: unknown): RackStatus => {
+  if (isActive !== true) return 'offline';
+  if (VALID_STATUSES.includes(rawStatus as RackStatus)) return rawStatus as RackStatus;
+  return 'offline';
+}
+
+const getNodeStatus = async (nodeId: string): Promise<RackStatus> => {
+  const [telemetry, attributes] = await Promise.all([
+    deviceApi.getLatestTelemetry(nodeId),
+    deviceApi.getAttributes(nodeId, ['active']),
+  ]);
+
+  return resolveRackStatus(
+    telemetry.status?.[0]?.value,
+    toAttributes(attributes).active,
+  );
+};
+
+export const getRackSummaryAction = async (asset: Asset): Promise<RackSummary> => {
+  const [attributes, nodes] = await Promise.all([
+    rackApi.getAttributes(asset.id.id),
+    rackApi.getAssignedNodes(asset.id.id),
+  ]);
+
+  const attribute = toAttributes(attributes);
+  const node = nodes[0] ?? null;
+
+  return {
+    rack: {
+      id: asset.id.id,
+      name: String(attribute.rack_name ?? asset.name),
+      location: String(attribute.location ?? ''),
+      rfidUid: attribute.rfid_uid ? String(attribute.rfid_uid) : undefined,
+      nodeId: node?.to.id,
+      nodeName: node?.toName ?? undefined,
+    },
+    status: node ? await getNodeStatus(node.to.id) : 'offline',
+    // TODO: contar alarmas activas desde ThingsBoard
+    activeAlarms: 0,
+  };
+}
