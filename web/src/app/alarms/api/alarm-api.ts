@@ -23,4 +23,8 @@ export const alarmApi = {
     });
     return data;
   },
+
+  acknowledgeAlarm: async (alarmId: string): Promise<void> => {
+    await thingsboardClient.post(`/api/alarm/${alarmId}/ack`);
+  },
 };
