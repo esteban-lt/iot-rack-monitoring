@@ -14,11 +14,13 @@ import { features, type DataTableFeatures } from "./data-table-features"
 interface DataTableProps<TData extends RowData> {
   columns: ColumnDef<DataTableFeatures, TData>[]
   data: TData[]
+  onRowClick?: (row: TData) => void
 }
 
 export function DataTable<TData extends RowData>({
   columns,
   data,
+  onRowClick,
 }: DataTableProps<TData>) {
   const table = useTable({
     features,
@@ -50,6 +52,8 @@ export function DataTable<TData extends RowData>({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
+                className={onRowClick && "cursor-pointer"}
+                onClick={() => onRowClick?.(row.original)}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
