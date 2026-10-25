@@ -1,9 +1,9 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import type { Alarm } from '@/interfaces/alarm';
 import { formatDate } from '@/lib/utils';
 import { isActive, isUnack, severityLabels, severityVariants } from '../../utils';
+import { AcknowledgeButton } from '../acknowledge-button';
 import { type DataTableFeatures } from './data-table-features';
 
 const columnHelper = createColumnHelper<DataTableFeatures, Alarm>();
@@ -14,6 +14,7 @@ export const columns = columnHelper.columns([
     cell: (info) => formatDate(info.getValue()),
   }),
   columnHelper.accessor('rackName', {
+    id: 'rackName',
     header: 'Rack',
     cell: (info) => <span className="font-bold">{info.getValue()}</span>,
   }),
@@ -41,6 +42,8 @@ export const columns = columnHelper.columns([
     id: 'actions',
     header: 'Acción',
     cell: ({ row }) =>
-      isUnack(row.original) && <Button variant="outline">Reconocer</Button>,
+      isUnack(row.original) && <AcknowledgeButton alarmId={row.original.id} />,
   }),
 ]);
+
+export const columnsWithoutRack = columns.filter((column) => column.id !== 'rackName');
