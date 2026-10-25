@@ -14,6 +14,7 @@ export const useAlarms = ({ filters, pageSize = 10, page = 0 }: Params) => {
     queryFn: () => getAlarmsAction(filters, pageSize, page),
     placeholderData: keepPreviousData,
     staleTime: 1000 * 60,
+    refetchInterval: 1000 * 60,
   });
 
   return query;
