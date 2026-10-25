@@ -1,6 +1,6 @@
 import { thingsboardClient } from '@/services/api/thingsboard-client';
 import type { GetAttributesResponse } from '../interfaces/get-attributes-response';
-import type { GetAssetsResponse } from '../interfaces/get-assets-response';
+import type { Data as Asset, GetAssetsResponse } from '../interfaces/get-assets-response';
 import type { GetRelationsResponse } from '../interfaces/get-relations-response';
 
 export const rackApi = {
@@ -11,6 +11,11 @@ export const rackApi = {
         page,
       },
     });
+    return data;
+  },
+
+  getAsset: async (assetId: string): Promise<Asset> => {
+    const { data } = await thingsboardClient.get(`/api/asset/${assetId}`);
     return data;
   },
 
