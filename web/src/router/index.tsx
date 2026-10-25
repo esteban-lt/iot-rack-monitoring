@@ -5,6 +5,7 @@ import DashboardPage from '@/app/dashboard';
 import { lazy } from 'react';
 
 const RacksPage = lazy(() => import('@/app/racks'));
+const RackDetailsPage = lazy(() => import('@/app/racks/[id]'));
 const DevicesPage = lazy(() => import('@/app/devices'));
 const AlarmsPage = lazy(() => import('@/app/alarms'));
 
@@ -21,7 +22,16 @@ export const router = createBrowserRouter([
           },
           {
             path: 'racks',
-            element: <RacksPage />,
+            children: [
+              {
+                index: true,
+                element: <RacksPage />,
+              },
+              {
+                path: ':id',
+                element: <RackDetailsPage />,
+              },
+            ],
           },
           {
             path: 'devices',
