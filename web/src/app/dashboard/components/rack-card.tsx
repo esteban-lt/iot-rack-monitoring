@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import type { RackSummary } from '@/interfaces/rack-summary';
@@ -14,7 +15,9 @@ export const RackCard = ({ summary }: Props) => {
   return (
     <Card>
       <CardHeader className="flex justify-between items-center">
-        <CardTitle>{rack.name}</CardTitle>
+        <CardTitle>
+          <Link to={`/racks/${rack.id}`} className="hover:underline">{rack.name}</Link>
+        </CardTitle>
         <Badge variant={badgeVariants[status]}>{statusLabels[status]}</Badge>
       </CardHeader>
       <CardContent>
