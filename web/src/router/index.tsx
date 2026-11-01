@@ -4,6 +4,7 @@ import AppLayout from '@/layouts/app-layout';
 import DashboardPage from '@/app/dashboard';
 import { lazy } from 'react';
 
+const LoginPage = lazy(() => import('@/app/auth'));
 const RacksPage = lazy(() => import('@/app/racks'));
 const RackDetailsPage = lazy(() => import('@/app/racks/[id]'));
 const DevicesPage = lazy(() => import('@/app/devices'));
@@ -13,6 +14,10 @@ export const router = createBrowserRouter([
   {
     path: '/',
     children: [
+      {
+        path: 'login',
+        element: <LoginPage />,
+      },
       {
         element: <AppLayout />,
         children: [
