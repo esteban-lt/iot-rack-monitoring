@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { Button } from '@/components/ui/button';
 import { Filters, type StatusFilter } from './components/filters';
 import { columns } from './components/data-table/columns';
 import { DataTable } from './components/data-table/data-table';
+import { RackFormDialog } from './components/rack-form-dialog';
 import { useRacks } from './hooks/use-racks';
 import { filterRacks } from './utils';
 
@@ -17,6 +19,9 @@ const Index = () => {
 
   return (
     <>
+      <div className="flex justify-end">
+        <RackFormDialog trigger={<Button>Nuevo rack</Button>} />
+      </div>
       <Filters
         summaries={racks}
         search={search}

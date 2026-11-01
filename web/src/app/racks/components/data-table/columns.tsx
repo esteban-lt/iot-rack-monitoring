@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { RackSummary } from '@/interfaces/rack-summary';
 import { badgeVariants, statusLabels } from '@/lib/rack-status';
+import { RackFormDialog } from '../rack-form-dialog';
 import { type DataTableFeatures } from './data-table-features';
 
 const columnHelper = createColumnHelper<DataTableFeatures, RackSummary>();
@@ -37,6 +38,11 @@ export const columns = columnHelper.columns([
   columnHelper.display({
     id: 'actions',
     header: 'Acción',
-    cell: () => <Button variant="outline">Editar</Button>,
+    cell: ({ row }) => (
+      // stops the row click (open details) from firing, also for clicks inside the dialog
+      <div onClick={(event) => event.stopPropagation()}>
+        <RackFormDialog rack={row.original.rack} trigger={<Button variant="outline">Editar</Button>} />
+      </div>
+    ),
   }),
 ]);

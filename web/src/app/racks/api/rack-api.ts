@@ -1,7 +1,7 @@
 import { thingsboardClient } from '@/services/api/thingsboard-client';
 import type { GetAttributesResponse } from '../interfaces/get-attributes-response';
 import type { Data as Asset, GetAssetsResponse } from '../interfaces/get-assets-response';
-import type { GetRelationsResponse } from '../interfaces/get-relations-response';
+import type { GetEntitiesQueryResponse } from '@/services/api/interfaces/get-entities-query-response';
 
 export const rackApi = {
   getAssets: async (pageSize: number = 50, page: number = 0): Promise<GetAssetsResponse> => {
@@ -9,6 +9,7 @@ export const rackApi = {
       params: {
         pageSize,
         page,
+        type: 'Rack',
       },
     });
     return data;
@@ -28,14 +29,25 @@ export const rackApi = {
     return data;
   },
 
-  getAssignedNodes: async (assetId: string): Promise<GetRelationsResponse[]> => {
-    const { data } = await thingsboardClient.get('/api/relations/info', {
-      params: {
-        fromId: assetId,
-        fromType: 'ASSET',
-        relationType: 'Contains',
-      },
+  getRackTags: async (): Promise<GetEntitiesQueryResponse> => {
+    const { data } = await thingsboardClient.post('/api/entitiesQuery/find', {
+      entityFilter: { type: 'assetType', assetTypes: ['Rack'] },
+      pageLink: { page: 0, pageSize: 1000 },
+      entityFields: [{ type: 'ENTITY_FIELD', key: 'name' }],
+      latestValues: [
+        { type: 'SERVER_ATTRIBUTE', key: 'rfid_uid' },
+        { type: 'SERVER_ATTRIBUTE', key: 'rack_name' },
+      ],
     });
     return data;
+  },
+
+  createAsset: async (name: string): Promise<Asset> => {
+    const { data } = await thingsboardClient.post('/api/asset', { name, type: 'Rack' });
+    return data;
+  },
+
+  saveAttributes: async (assetId: string, attributes: Record<string, string>): Promise<void> => {
+    await thingsboardClient.post(`/api/plugins/telemetry/ASSET/${assetId}/attributes/SERVER_SCOPE`, attributes);
   },
 };

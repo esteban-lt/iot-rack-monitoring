@@ -3,6 +3,7 @@ import { rackApi } from '../api/rack-api';
 import { toAttributes } from '@/lib/to-attributes';
 import { deviceApi } from '@/app/devices/api/device-api';
 import type { Data as Asset } from '../interfaces/get-assets-response';
+import type { RfidLinks } from '../interfaces/rfid-links';
 
 const VALID_STATUSES: RackStatus[] = ['ok', 'warning', 'alarm', 'offline'];
 
@@ -24,14 +25,9 @@ const getNodeStatus = async (nodeId: string): Promise<RackStatus> => {
   );
 };
 
-export const getRackSummaryAction = async (asset: Asset): Promise<RackSummary> => {
-  const [attributes, nodes] = await Promise.all([
-    rackApi.getAttributes(asset.id.id),
-    rackApi.getAssignedNodes(asset.id.id),
-  ]);
-
-  const attribute = toAttributes(attributes);
-  const node = nodes[0] ?? null;
+export const getRackSummaryAction = async (asset: Asset, links: RfidLinks): Promise<RackSummary> => {
+  const attribute = toAttributes(await rackApi.getAttributes(asset.id.id));
+  const node = links.nodeByRackId[asset.id.id];
 
   return {
     rack: {
@@ -39,10 +35,10 @@ export const getRackSummaryAction = async (asset: Asset): Promise<RackSummary> =
       name: String(attribute.rack_name ?? asset.name),
       location: String(attribute.location ?? ''),
       rfidUid: attribute.rfid_uid ? String(attribute.rfid_uid) : undefined,
-      nodeId: node?.to.id,
-      nodeName: node?.toName ?? undefined,
+      nodeId: node?.id,
+      nodeName: node?.name,
     },
-    status: node ? await getNodeStatus(node.to.id) : 'offline',
+    status: node ? await getNodeStatus(node.id) : 'offline',
     // TODO: contar alarmas activas desde ThingsBoard
     activeAlarms: 0,
   };

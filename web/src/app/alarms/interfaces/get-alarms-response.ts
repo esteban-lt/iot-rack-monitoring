@@ -1,4 +1,4 @@
-import type { EntityID } from '@/app/racks/interfaces/get-relations-response';
+import type { EntityID } from '@/services/api/interfaces/entity-id';
 
 export interface GetAlarmsResponse {
   data:          AlarmData[];
