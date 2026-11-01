@@ -11,9 +11,12 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { Outlet } from 'react-router'
+import { Navigate, Outlet } from 'react-router'
+import { session } from '@/services/api/session'
 
 export default function AppLayout() {
+  if (!session.getToken()) return <Navigate to="/login" replace />
+
   return (
     <SidebarProvider>
       <AppSidebar />
