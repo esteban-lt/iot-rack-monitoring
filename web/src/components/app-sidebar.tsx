@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { useActiveAlarmsCount } from '@/app/alarms/hooks/use-active-alarms-count';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { TeamSwitcher } from '@/components/team-switcher';
@@ -51,13 +52,18 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const activeAlarms = useActiveAlarmsCount();
+  const navItems = data.navMain.map((item) =>
+    item.url === '/alarms' ? { ...item, badge: activeAlarms } : item,
+  );
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navItems} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
