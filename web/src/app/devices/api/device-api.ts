@@ -2,7 +2,7 @@ import { thingsboardClient } from '@/services/api/thingsboard-client';
 import type { GetAttributesResponse } from '../interfaces/get-attributes-response';
 import type { GetDevicesResponse } from '../interfaces/get-devices-response';
 import type { GetTelemetryResponse } from '../interfaces/get-telemetry-response';
-import type { GetRelationsResponse } from '@/app/racks/interfaces/get-relations-response';
+import type { GetEntitiesQueryResponse } from '@/services/api/interfaces/get-entities-query-response';
 
 export const deviceApi = {
   getDevices: async (pageSize: number = 50, page: number = 0): Promise<GetDevicesResponse> => {
@@ -48,13 +48,12 @@ export const deviceApi = {
     await thingsboardClient.post(`/api/plugins/telemetry/DEVICE/${deviceId}/attributes/SHARED_SCOPE`, attributes);
   },
 
-  getAssignedRacks: async (deviceId: string): Promise<GetRelationsResponse[]> => {
-    const { data } = await thingsboardClient.get('/api/relations/info', {
-      params: {
-        toId: deviceId,
-        toType: 'DEVICE',
-        relationType: 'Contains',
-      },
+  getNodeTags: async (): Promise<GetEntitiesQueryResponse> => {
+    const { data } = await thingsboardClient.post('/api/entitiesQuery/find', {
+      entityFilter: { type: 'entityType', entityType: 'DEVICE' },
+      pageLink: { page: 0, pageSize: 1000 },
+      entityFields: [{ type: 'ENTITY_FIELD', key: 'name' }],
+      latestValues: [{ type: 'CLIENT_ATTRIBUTE', key: 'rack_uid' }],
     });
     return data;
   },
