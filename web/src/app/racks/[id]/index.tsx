@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { badgeVariants, statusLabels } from '@/lib/rack-status';
 import type { HistoryRange } from '../interfaces/rack-history';
+import { useLiveRacks } from '../hooks/use-live-racks';
 import { useRack } from '../hooks/use-rack';
 import { useRackHistory } from '../hooks/use-rack-history';
 import { useThresholds } from '../hooks/use-thresholds';
@@ -23,6 +24,7 @@ const Index = () => {
   const { id = '' } = useParams();
   const [range, setRange] = useState<HistoryRange>('1h');
   const { data: summary, isLoading, isError } = useRack(id);
+  useLiveRacks(['rack', id], summary?.rack.nodeId ? [summary.rack.nodeId] : []);
   const { data: history } = useRackHistory(summary?.rack.nodeId, range);
   const { data: thresholds } = useThresholds(summary?.rack.nodeId);
 
