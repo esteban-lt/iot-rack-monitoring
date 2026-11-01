@@ -4,6 +4,7 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
@@ -12,6 +13,7 @@ interface NavItem {
   title: string;
   url: string;
   icon?: React.ReactNode;
+  badge?: number;
 }
 
 export function NavMain({ items }: { items: NavItem[] }) {
@@ -34,6 +36,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
               {item.icon}
               <span>{item.title}</span>
             </SidebarMenuButton>
+            {!!item.badge && <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>}
           </SidebarMenuItem>
         ))}
       </SidebarMenu>

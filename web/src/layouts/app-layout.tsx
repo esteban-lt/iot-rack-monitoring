@@ -12,6 +12,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { Navigate, Outlet } from 'react-router'
+import { RealtimeStatus } from '@/components/realtime-status'
 import { session } from '@/services/api/session'
 
 export default function AppLayout() {
@@ -36,6 +37,9 @@ export default function AppLayout() {
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
+          </div>
+          <div className="ml-auto px-4">
+            <RealtimeStatus />
           </div>
         </header>
 

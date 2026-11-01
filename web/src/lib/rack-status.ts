@@ -16,3 +16,11 @@ export const badgeVariants = {
 
 export const countByStatus = (summaries: RackSummary[], status: RackStatus) =>
   summaries.filter((summary) => summary.status === status).length;
+
+const VALID_STATUSES: RackStatus[] = ['ok', 'warning', 'alarm', 'offline'];
+
+export const resolveRackStatus = (rawStatus: string | undefined, isActive: boolean): RackStatus => {
+  if (!isActive) return 'offline';
+  if (VALID_STATUSES.includes(rawStatus as RackStatus)) return rawStatus as RackStatus;
+  return 'offline';
+}

@@ -17,15 +17,18 @@ thingsboardClient.interceptors.request.use((config) => {
   return config;
 });
 
-// Several requests can expire at the same time: they all wait for the same refresh
 let refreshRequest: Promise<SessionTokens> | null = null;
 
-const refreshSession = async () => {
-  const { data } = await axios.post<SessionTokens>(`${TB_API_URL}/api/auth/token`, {
-    refreshToken: session.getRefreshToken(),
-  });
-  session.save(data);
-  return data;
+export const refreshSession = () => {
+  refreshRequest ??= axios
+    .post<SessionTokens>(`${TB_API_URL}/api/auth/token`, { refreshToken: session.getRefreshToken() })
+    .then(({ data }) => {
+      session.save(data);
+      return data;
+    })
+    .finally(() => (refreshRequest = null));
+
+  return refreshRequest;
 };
 
 thingsboardClient.interceptors.response.use(
@@ -37,8 +40,7 @@ thingsboardClient.interceptors.response.use(
     if (error.response?.status !== 401 || isAuthRequest || request.isRetry) throw error;
 
     try {
-      refreshRequest ??= refreshSession().finally(() => (refreshRequest = null));
-      await refreshRequest;
+      await refreshSession();
       request.isRetry = true;
       return thingsboardClient(request);
     } catch {
