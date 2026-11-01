@@ -1,17 +1,10 @@
 import type { RackStatus, RackSummary } from '@/interfaces/rack-summary';
 import { rackApi } from '../api/rack-api';
+import { resolveRackStatus } from '@/lib/rack-status';
 import { toAttributes } from '@/lib/to-attributes';
 import { deviceApi } from '@/app/devices/api/device-api';
 import type { Data as Asset } from '../interfaces/get-assets-response';
 import type { RfidLinks } from '../interfaces/rfid-links';
-
-const VALID_STATUSES: RackStatus[] = ['ok', 'warning', 'alarm', 'offline'];
-
-const resolveRackStatus = (rawStatus: string | undefined, isActive: unknown): RackStatus => {
-  if (isActive !== true) return 'offline';
-  if (VALID_STATUSES.includes(rawStatus as RackStatus)) return rawStatus as RackStatus;
-  return 'offline';
-}
 
 const getNodeStatus = async (nodeId: string): Promise<RackStatus> => {
   const [telemetry, attributes] = await Promise.all([
@@ -21,7 +14,7 @@ const getNodeStatus = async (nodeId: string): Promise<RackStatus> => {
 
   return resolveRackStatus(
     telemetry.status?.[0]?.value,
-    toAttributes(attributes).active,
+    toAttributes(attributes).active === true,
   );
 };
 
