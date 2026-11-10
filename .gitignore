@@ -13,9 +13,10 @@ dist-ssr
 *.local
 .env
 .env.local
+secrets.h
 
+docs
 .claude
-esp32
 
 # Editor directories and files
 .vscode/*
