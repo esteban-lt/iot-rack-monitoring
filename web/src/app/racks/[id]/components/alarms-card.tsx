@@ -11,7 +11,7 @@ export const AlarmsCard = ({ nodeId }: Props) => {
   const { data } = useAlarms({ filters: { severity: 'all', status: 'all', nodeId }, pageSize: 5 });
 
   return (
-    <Card>
+    <Card className="xl:col-span-2">
       <CardHeader>
         <CardTitle>Alarmas recientes</CardTitle>
       </CardHeader>
