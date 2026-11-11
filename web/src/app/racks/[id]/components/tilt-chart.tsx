@@ -17,17 +17,18 @@ interface Props {
   data: TelemetryPoint[];
   range: HistoryRange;
   thresholds?: Thresholds;
+  isLoading: boolean;
 }
 
 const chartConfig = {
   tilt: { label: 'Total', color: 'var(--chart-1)' },
-  tiltX: { label: 'Eje X', color: 'var(--chart-2)' },
-  tiltY: { label: 'Eje Y', color: 'var(--chart-3)' },
+  tiltX: { label: 'Frontal', color: 'var(--chart-2)' },
+  tiltY: { label: 'Lateral', color: 'var(--chart-3)' },
 } satisfies ChartConfig;
 
-export const TiltChart = ({ data, range, thresholds }: Props) => {
+export const TiltChart = ({ data, range, thresholds, isLoading }: Props) => {
   return (
-    <ChartCard title="Inclinación (grados)" isEmpty={!data.length}>
+    <ChartCard title="Inclinación (grados)" isEmpty={!data.length} isLoading={isLoading}>
       <ChartContainer config={chartConfig} className="aspect-auto h-72 w-full">
         <LineChart data={data}>
           <CartesianGrid vertical={false} />
