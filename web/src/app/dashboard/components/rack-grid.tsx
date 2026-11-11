@@ -7,7 +7,7 @@ interface Props {
 
 export const RackGrid = ({ summaries }: Props) => {
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
       {summaries.map((summary) => (
         <RackCard key={summary.rack.id} summary={summary} />
       ))}

@@ -11,15 +11,16 @@ interface Props {
   data: ImpactEvent[];
   range: HistoryRange;
   thresholds?: Thresholds;
+  isLoading: boolean;
 }
 
 const chartConfig = {
   impactG: { label: 'Impacto (g)', color: 'var(--chart-1)' },
 } satisfies ChartConfig;
 
-export const ImpactsChart = ({ data, range, thresholds }: Props) => {
+export const ImpactsChart = ({ data, range, thresholds, isLoading }: Props) => {
   return (
-    <ChartCard title="Impactos (g)" isEmpty={!data.length}>
+    <ChartCard title="Impactos (g)" isEmpty={!data.length} isLoading={isLoading}>
       <ChartContainer config={chartConfig} className="aspect-auto h-64 w-full">
         <BarChart data={data}>
           <CartesianGrid vertical={false} />

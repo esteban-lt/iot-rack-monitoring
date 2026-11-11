@@ -8,15 +8,16 @@ import { ChartCard } from './chart-card';
 interface Props {
   data: TelemetryPoint[];
   range: HistoryRange;
+  isLoading: boolean;
 }
 
 const chartConfig = {
   vibRms: { label: 'Vibración (g)', color: 'var(--chart-1)' },
 } satisfies ChartConfig;
 
-export const VibrationChart = ({ data, range }: Props) => {
+export const VibrationChart = ({ data, range, isLoading }: Props) => {
   return (
-    <ChartCard title="Vibración (g, RMS)" isEmpty={!data.length}>
+    <ChartCard title="Vibración (g, RMS)" isEmpty={!data.length} isLoading={isLoading}>
       <ChartContainer config={chartConfig} className="aspect-auto h-64 w-full">
         <LineChart data={data}>
           <CartesianGrid vertical={false} />

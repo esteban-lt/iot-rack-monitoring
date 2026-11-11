@@ -17,14 +17,14 @@ const statuses: RackStatus[] = ['ok', 'warning', 'alarm', 'offline'];
 
 export const Filters = ({ summaries, search, onSearchChange, status, onStatusChange }: Props) => {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex flex-wrap items-center justify-between gap-2">
       <Input
         placeholder="Buscar rack, ubicación o nodo"
-        className="w-64"
+        className="w-full sm:w-64"
         value={search}
         onChange={(event) => onSearchChange(event.target.value)}
       />
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <Button variant={status === 'all' ? 'default' : 'outline'} onClick={() => onStatusChange('all')}>
           Todos ({summaries.length})
         </Button>

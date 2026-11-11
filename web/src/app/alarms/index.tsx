@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useRacks } from '../racks/hooks/use-racks';
 import { Filters } from './components/filters';
+import { AlarmsSkeleton } from './components/skeletons/alarms-skeleton';
 import { columns } from './components/data-table/columns';
 import { DataTable } from './components/data-table/data-table';
 import { TablePagination } from './components/table-pagination';
@@ -24,7 +25,7 @@ const Index = () => {
     setPage(0);
   };
 
-  if (isLoading) return <p>Cargando alarmas...</p>;
+  if (isLoading) return <AlarmsSkeleton />;
   if (isError || !data) return <p>No se pudieron cargar las alarmas.</p>;
 
   return (

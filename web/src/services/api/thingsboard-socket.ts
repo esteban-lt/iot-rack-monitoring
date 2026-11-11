@@ -38,6 +38,13 @@ const send = (cmds: SocketCommand[]) => {
   if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ cmds }));
 };
 
+const scheduleReconnect = () => {
+  if (!subscriptions.size) return;
+
+  const delay = Math.min(1000 * 2 ** reconnectAttempts++, MAX_RECONNECT_DELAY_MS);
+  reconnectTimer = setTimeout(connect, delay);
+};
+
 const connect = async () => {
   if (socket || status === 'connecting' || !subscriptions.size) return;
 
@@ -51,6 +58,7 @@ const connect = async () => {
       token = (await refreshSession()).token;
     } catch {
       setStatus('disconnected');
+      scheduleReconnect();
       return;
     }
   }
@@ -75,10 +83,7 @@ const connect = async () => {
   socket.onclose = () => {
     socket = null;
     setStatus('disconnected');
-    if (!subscriptions.size) return;
-
-    const delay = Math.min(1000 * 2 ** reconnectAttempts++, MAX_RECONNECT_DELAY_MS);
-    reconnectTimer = setTimeout(connect, delay);
+    scheduleReconnect();
   };
 };
 

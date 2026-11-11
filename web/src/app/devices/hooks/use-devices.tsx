@@ -10,7 +10,7 @@ export const useDevices = ({ pageSize = 50, page = 0 }: Params = {}) => {
   const query = useQuery({
     queryKey: ['devices', { pageSize, page }],
     queryFn: () => getDevicesAction(pageSize, page),
-    staleTime: 1000 * 60 * 30,
+    staleTime: 1000 * 60,
   });
 
   return query;

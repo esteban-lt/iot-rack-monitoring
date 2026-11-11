@@ -1,5 +1,4 @@
 import { createColumnHelper } from '@tanstack/react-table';
-import { Button } from '@/components/ui/button';
 import type { NodeSummary } from '@/interfaces/node-summary';
 import { formatDate } from '@/lib/utils';
 import { type DataTableFeatures } from './data-table-features';
@@ -30,7 +29,7 @@ export const columns = columnHelper.columns([
   columnHelper.accessor((row) => row.latest?.rssi, {
     id: 'rssi',
     header: 'Señal WiFi',
-    cell: (info) => (info.getValue() ? `${info.getValue()} dBm` : 'sin señal'),
+    cell: (info) => (info.getValue() === undefined ? 'sin señal' : `${info.getValue()} dBm`),
   }),
   columnHelper.accessor((row) => row.latest?.ts ?? row.node.lastActivityTs, {
     id: 'lastActivityTs',
@@ -41,10 +40,5 @@ export const columns = columnHelper.columns([
     id: 'rackName',
     header: 'Rack asignado',
     cell: (info) => info.getValue() ?? <span className="font-bold">Sin asignar</span>,
-  }),
-  columnHelper.display({
-    id: 'actions',
-    header: 'Acción',
-    cell: () => <Button variant="outline">Editar</Button>,
   }),
 ]);

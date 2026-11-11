@@ -5,6 +5,7 @@ import { Filters, type StatusFilter } from './components/filters';
 import { columns } from './components/data-table/columns';
 import { DataTable } from './components/data-table/data-table';
 import { RackFormDialog } from './components/rack-form-dialog';
+import { RacksSkeleton } from './components/skeletons/racks-skeleton';
 import { useRacks } from './hooks/use-racks';
 import { filterRacks } from './utils';
 
@@ -14,7 +15,7 @@ const Index = () => {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<StatusFilter>('all');
 
-  if (isLoading) return <p>Cargando racks...</p>;
+  if (isLoading) return <RacksSkeleton />;
   if (isError) return <p>No se pudieron cargar los racks.</p>;
 
   return (

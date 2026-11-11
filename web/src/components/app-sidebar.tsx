@@ -1,9 +1,9 @@
 import * as React from 'react';
 
 import { useActiveAlarmsCount } from '@/app/alarms/hooks/use-active-alarms-count';
+import { AppBrand } from '@/components/app-brand';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
-import { TeamSwitcher } from '@/components/team-switcher';
 import {
   Sidebar,
   SidebarContent,
@@ -16,17 +16,9 @@ import {
   BoxesIcon,
   CpuIcon,
   LayoutDashboardIcon,
-  WarehouseIcon,
 } from 'lucide-react';
 
 const data = {
-  teams: [
-    {
-      name: 'Monitoreo de racks',
-      logo: <WarehouseIcon />,
-      plan: 'Enterprise',
-    },
-  ],
   navMain: [
     {
       title: 'Dashboard',
@@ -60,7 +52,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <AppBrand />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navItems} />

@@ -25,21 +25,18 @@ export const CurrentStateCard = ({ summary }: Props) => {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <p className="text-5xl font-bold">
+        <p className="text-4xl font-bold">
           {latest ? `${latest.tilt.toFixed(1)}°` : '—'}
           <span className="ml-2 text-sm font-normal text-muted-foreground">inclinación total</span>
         </p>
         <div className="grid grid-cols-2 gap-4">
-          <Stat label="Inclinación en X" value={latest ? `${latest.tiltX.toFixed(1)}°` : '—'} />
-          <Stat label="Inclinación en Y" value={latest ? `${latest.tiltY.toFixed(1)}°` : '—'} />
+          <Stat label="Inclinación frontal" value={latest ? `${latest.tiltX.toFixed(1)}°` : '—'} />
+          <Stat label="Inclinación lateral" value={latest ? `${latest.tiltY.toFixed(1)}°` : '—'} />
           <Stat label="Vibración (RMS)" value={latest ? `${latest.vibRms.toFixed(2)} g` : '—'} />
           <Stat
             label={lastImpact ? `Último impacto · ${formatDate(lastImpact.ts)}` : 'Último impacto'}
             value={lastImpact ? `${lastImpact.impactG} g` : 'Sin registros'}
           />
-          <Stat label="ax" value={latest ? `${latest.accelX.toFixed(2)} g` : '—'} />
-          <Stat label="ay" value={latest ? `${latest.accelY.toFixed(2)} g` : '—'} />
-          <Stat label="az" value={latest ? `${latest.accelZ.toFixed(2)} g` : '—'} />
         </div>
         <div className="text-sm text-muted-foreground">
           <p>Nodo asignado: {rack.nodeName ?? 'Sin asignar'}</p>

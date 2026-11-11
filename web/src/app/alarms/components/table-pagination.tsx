@@ -30,7 +30,7 @@ export const TablePagination = ({ page, totalPages, pageSize, onPageChange, onPa
   const isLastPage = page + 1 >= totalPages;
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex flex-wrap items-center justify-between gap-2">
       <div className="flex items-center gap-2 text-sm">
         Filas por página
         <Select items={pageSizeOptions.map((size) => ({ value: size, label: String(size) }))} value={pageSize} onValueChange={(value) => onPageSizeChange(value!)}>

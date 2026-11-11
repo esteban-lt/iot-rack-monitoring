@@ -2,7 +2,13 @@ import { createBrowserRouter } from 'react-router';
 
 import AppLayout from '@/layouts/app-layout';
 import DashboardPage from '@/app/dashboard';
-import { lazy } from 'react';
+import { AlarmsSkeleton } from '@/app/alarms/components/skeletons/alarms-skeleton';
+import { DevicesSkeleton } from '@/app/devices/components/skeletons/devices-skeleton';
+import { RackCrumb } from '@/app/racks/[id]/components/rack-crumb';
+import { RackDetailSkeleton } from '@/app/racks/[id]/components/skeletons/rack-detail-skeleton';
+import { RacksSkeleton } from '@/app/racks/components/skeletons/racks-skeleton';
+import { ErrorScreen } from '@/components/error-screen';
+import { lazy, Suspense } from 'react';
 
 const LoginPage = lazy(() => import('@/app/auth'));
 const RacksPage = lazy(() => import('@/app/racks'));
@@ -13,6 +19,7 @@ const AlarmsPage = lazy(() => import('@/app/alarms'));
 export const router = createBrowserRouter([
   {
     path: '/',
+    errorElement: <ErrorScreen title="Error" message="Ocurrió un error inesperado." />,
     children: [
       {
         path: 'login',
@@ -23,30 +30,39 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
+            handle: { crumb: 'Dashboard' },
             element: <DashboardPage />,
           },
           {
             path: 'racks',
+            handle: { crumb: 'Racks' },
             children: [
               {
                 index: true,
-                element: <RacksPage />,
+                element: <Suspense fallback={<RacksSkeleton />}><RacksPage /></Suspense>,
               },
               {
                 path: ':id',
-                element: <RackDetailsPage />,
+                handle: { crumb: RackCrumb },
+                element: <Suspense fallback={<RackDetailSkeleton />}><RackDetailsPage /></Suspense>,
               },
             ],
           },
           {
             path: 'devices',
-            element: <DevicesPage />,
+            handle: { crumb: 'Dispositivos' },
+            element: <Suspense fallback={<DevicesSkeleton />}><DevicesPage /></Suspense>,
           },
           {
             path: 'alarms',
-            element: <AlarmsPage />,
+            handle: { crumb: 'Alarmas' },
+            element: <Suspense fallback={<AlarmsSkeleton />}><AlarmsPage /></Suspense>,
           },
         ],
+      },
+      {
+        path: '*',
+        element: <ErrorScreen title="404" message="Esta página no se pudo encontrar." />,
       },
     ],
   },

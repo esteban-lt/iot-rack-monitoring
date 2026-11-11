@@ -32,7 +32,5 @@ export const getRackSummaryAction = async (asset: Asset, links: RfidLinks): Prom
       nodeName: node?.name,
     },
     status: node ? await getNodeStatus(node.id) : 'offline',
-    // TODO: contar alarmas activas desde ThingsBoard
-    activeAlarms: 0,
   };
 }

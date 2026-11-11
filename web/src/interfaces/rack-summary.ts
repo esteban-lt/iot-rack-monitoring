@@ -9,5 +9,4 @@ export interface RackSummary {
   status: RackStatus;
   latest?: TelemetrySample;
   lastImpact?: ImpactEvent;
-  activeAlarms: number;
 }
