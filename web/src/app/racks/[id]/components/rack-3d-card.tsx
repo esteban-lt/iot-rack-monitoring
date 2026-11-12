@@ -1,5 +1,10 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { lazy, Suspense, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import type { RackSummary } from '@/interfaces/rack-summary';
+
+const RackScene = lazy(() => import('./rack-3d/rack-scene'));
 
 interface Props {
   summary: RackSummary;
@@ -13,17 +18,33 @@ const Stat = ({ label, value }: { label: string; value: string }) => (
 );
 
 export const Rack3DCard = ({ summary }: Props) => {
-  const { latest } = summary;
+  const [showCargo, setShowCargo] = useState(false);
+  const { status, latest, lastImpact } = summary;
 
   return (
     <Card className="h-full">
       <CardHeader>
         <CardTitle>Vista 3D del rack</CardTitle>
-        <CardDescription>Próximamente</CardDescription>
+        <CardDescription>Arrastra para rotar</CardDescription>
+        <CardAction>
+          <Button variant="outline" size="sm" onClick={() => setShowCargo(!showCargo)}>
+            {showCargo ? 'Quitar cargas' : 'Mostrar cargas'}
+          </Button>
+        </CardAction>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col gap-4">
-        <div className="flex min-h-72 flex-1 items-center justify-center text-sm text-muted-foreground">
-          Aquí irá el componente 3D.
+        <div className="relative min-h-72 flex-1">
+          <div className="absolute inset-0">
+            <Suspense fallback={<Skeleton className="size-full" />}>
+              <RackScene
+                tiltX={latest?.tiltX ?? 0}
+                tiltY={latest?.tiltY ?? 0}
+                status={status}
+                impact={lastImpact}
+                showCargo={showCargo}
+              />
+            </Suspense>
+          </div>
         </div>
         <div className="grid grid-cols-3 gap-2">
           <Stat label="ax" value={latest ? `${latest.accelX.toFixed(2)} g` : '—'} />
