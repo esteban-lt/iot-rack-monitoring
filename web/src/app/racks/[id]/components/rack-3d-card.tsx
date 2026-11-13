@@ -1,10 +1,12 @@
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense } from 'react';
+import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { RackSummary } from '@/interfaces/rack-summary';
+import { useRackModel } from '../../hooks/use-rack-model';
 
-const RackScene = lazy(() => import('./rack-3d/rack-scene'));
+const RackScene = lazy(() => import('../../components/rack-3d/rack-scene'));
 
 interface Props {
   summary: RackSummary;
@@ -18,8 +20,8 @@ const Stat = ({ label, value }: { label: string; value: string }) => (
 );
 
 export const Rack3DCard = ({ summary }: Props) => {
-  const [showCargo, setShowCargo] = useState(false);
-  const { status, latest, lastImpact } = summary;
+  const { rack, status, latest, lastImpact } = summary;
+  const { data: config } = useRackModel(rack.id);
 
   return (
     <Card className="h-full">
@@ -27,8 +29,8 @@ export const Rack3DCard = ({ summary }: Props) => {
         <CardTitle>Vista 3D del rack</CardTitle>
         <CardDescription>Arrastra para rotar</CardDescription>
         <CardAction>
-          <Button variant="outline" size="sm" onClick={() => setShowCargo(!showCargo)}>
-            {showCargo ? 'Quitar cargas' : 'Mostrar cargas'}
+          <Button variant="outline" size="sm" nativeButton={false} render={<Link to={`/racks/${rack.id}/model`} />}>
+            Personalizar
           </Button>
         </CardAction>
       </CardHeader>
@@ -36,13 +38,17 @@ export const Rack3DCard = ({ summary }: Props) => {
         <div className="relative min-h-72 flex-1">
           <div className="absolute inset-0">
             <Suspense fallback={<Skeleton className="size-full" />}>
-              <RackScene
-                tiltX={latest?.tiltX ?? 0}
-                tiltY={latest?.tiltY ?? 0}
-                status={status}
-                impact={lastImpact}
-                showCargo={showCargo}
-              />
+              {config ? (
+                <RackScene
+                  config={config}
+                  tiltX={latest?.tiltX ?? 0}
+                  tiltY={latest?.tiltY ?? 0}
+                  status={status}
+                  impact={lastImpact}
+                />
+              ) : (
+                <Skeleton className="size-full" />
+              )}
             </Suspense>
           </div>
         </div>
