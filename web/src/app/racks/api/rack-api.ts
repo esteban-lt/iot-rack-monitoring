@@ -47,7 +47,7 @@ export const rackApi = {
     return data;
   },
 
-  saveAttributes: async (assetId: string, attributes: Record<string, string>): Promise<void> => {
+  saveAttributes: async (assetId: string, attributes: Record<string, unknown>): Promise<void> => {
     await thingsboardClient.post(`/api/plugins/telemetry/ASSET/${assetId}/attributes/SERVER_SCOPE`, attributes);
   },
 };
