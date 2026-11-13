@@ -13,6 +13,7 @@ import { lazy, Suspense } from 'react';
 const LoginPage = lazy(() => import('@/app/auth'));
 const RacksPage = lazy(() => import('@/app/racks'));
 const RackDetailsPage = lazy(() => import('@/app/racks/[id]'));
+const RackModelPage = lazy(() => import('@/app/racks/[id]/model'));
 const DevicesPage = lazy(() => import('@/app/devices'));
 const AlarmsPage = lazy(() => import('@/app/alarms'));
 
@@ -44,7 +45,17 @@ export const router = createBrowserRouter([
               {
                 path: ':id',
                 handle: { crumb: RackCrumb },
-                element: <Suspense fallback={<RackDetailSkeleton />}><RackDetailsPage /></Suspense>,
+                children: [
+                  {
+                    index: true,
+                    element: <Suspense fallback={<RackDetailSkeleton />}><RackDetailsPage /></Suspense>,
+                  },
+                  {
+                    path: 'model',
+                    handle: { crumb: 'Modelo 3D' },
+                    element: <Suspense><RackModelPage /></Suspense>,
+                  },
+                ],
               },
             ],
           },
