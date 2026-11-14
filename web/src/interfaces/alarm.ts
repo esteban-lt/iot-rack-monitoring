@@ -4,6 +4,7 @@ export type AlarmStatus = 'active-unack' | 'active-ack' | 'cleared-unack' | 'cle
 export interface Alarm {
   id: string;
   nodeId: string;
+  rackId?: string;
   rackName?: string;
   type: string;
   severity: AlarmSeverity;

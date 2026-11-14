@@ -1,4 +1,5 @@
 import { createColumnHelper } from '@tanstack/react-table';
+import { Link } from 'react-router';
 import { Badge } from '@/components/ui/badge';
 import type { Alarm } from '@/interfaces/alarm';
 import { formatDate } from '@/lib/utils';
@@ -17,7 +18,12 @@ export const columns = columnHelper.columns([
   columnHelper.accessor('rackName', {
     id: 'rackName',
     header: 'Rack',
-    cell: (info) => <span className="font-bold">{info.getValue()}</span>,
+    cell: ({ row }) => {
+      const { rackId, rackName } = row.original;
+      return rackId
+        ? <Link to={`/racks/${rackId}`} className="font-bold hover:underline">{rackName}</Link>
+        : <span className="font-bold">{rackName ?? '—'}</span>;
+    },
   }),
   columnHelper.accessor('type', {
     header: 'Tipo',

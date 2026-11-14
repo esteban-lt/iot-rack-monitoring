@@ -23,6 +23,7 @@ export const getAlarmsAction = async (filters: AlarmFilters, pageSize: number = 
   const alarms = response.data.map((alarm): Alarm => ({
     id: alarm.id.id,
     nodeId: alarm.originator.id,
+    rackId: links.rackByNodeId[alarm.originator.id]?.id,
     rackName: links.rackByNodeId[alarm.originator.id]?.name,
     type: alarm.type,
     severity: alarm.severity.toLowerCase() as AlarmSeverity,
