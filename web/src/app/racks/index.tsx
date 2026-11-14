@@ -7,12 +7,14 @@ import { columns } from './components/data-table/columns';
 import { DataTable } from './components/data-table/data-table';
 import { RackFormDialog } from './components/rack-form-dialog';
 import { RacksSkeleton } from './components/skeletons/racks-skeleton';
+import { useLiveRacks } from './hooks/use-live-racks';
 import { useRacks } from './hooks/use-racks';
 import { filterRacks } from './utils';
 
 const Index = () => {
   const navigate = useNavigate();
   const { data: racks = [], isLoading, isError } = useRacks();
+  useLiveRacks(['racks', { pageSize: 50, page: 0 }], racks.flatMap(({ rack }) => rack.nodeId ?? []));
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<StatusFilter>('all');
 
