@@ -14,6 +14,13 @@ export const badgeVariants = {
   offline: 'outline',
 } as const;
 
+export const statusColors: Record<RackStatus, string> = {
+  ok: 'bg-green-500',
+  warning: 'bg-orange-500',
+  alarm: 'bg-red-500',
+  offline: 'bg-muted-foreground',
+};
+
 export const countByStatus = (summaries: RackSummary[], status: RackStatus) =>
   summaries.filter((summary) => summary.status === status).length;
 
