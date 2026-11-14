@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { RackStatus, RackSummary } from '@/interfaces/rack-summary';
@@ -11,11 +12,12 @@ interface Props {
   onSearchChange: (search: string) => void;
   status: StatusFilter;
   onStatusChange: (status: StatusFilter) => void;
+  children?: ReactNode;
 }
 
 const statuses: RackStatus[] = ['ok', 'warning', 'alarm', 'offline'];
 
-export const Filters = ({ summaries, search, onSearchChange, status, onStatusChange }: Props) => {
+export const Filters = ({ summaries, search, onSearchChange, status, onStatusChange, children }: Props) => {
   return (
     <div className="flex flex-wrap items-center justify-between gap-2">
       <Input
@@ -33,6 +35,7 @@ export const Filters = ({ summaries, search, onSearchChange, status, onStatusCha
             {statusLabels[item]} ({countByStatus(summaries, item)})
           </Button>
         ))}
+        {children}
       </div>
     </div>
   );
