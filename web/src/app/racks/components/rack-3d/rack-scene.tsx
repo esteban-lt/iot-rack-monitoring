@@ -63,8 +63,27 @@ const Guides = ({ width, height, depth }: { width: number; height: number; depth
   );
 }
 
+// Checked before mounting the canvas: without WebGL three.js throws and would take down the whole page
+const supportsWebGL = (() => {
+  try {
+    const context = document.createElement('canvas').getContext('webgl2') ?? document.createElement('canvas').getContext('webgl');
+    context?.getExtension('WEBGL_lose_context')?.loseContext();
+    return !!context;
+  } catch {
+    return false;
+  }
+})();
+
 const RackScene = ({ highlight, ...props }: Props) => {
   const { width, height, depth } = props.config;
+
+  if (!supportsWebGL) {
+    return (
+      <p className="flex size-full items-center justify-center text-center text-sm text-muted-foreground">
+        Este navegador no admite WebGL, así que la vista 3D no está disponible.
+      </p>
+    );
+  }
 
   return (
     <Canvas frameloop="demand" camera={{ position: [3.4, 2.5, 5.2], fov: 32, far: 600 }}>
