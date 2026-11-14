@@ -5,10 +5,12 @@ import { columns } from './components/data-table/columns';
 import { DataTable } from './components/data-table/data-table';
 import { DevicesSkeleton } from './components/skeletons/devices-skeleton';
 import { useDevices } from './hooks/use-devices';
+import { useLiveNodes } from './hooks/use-live-nodes';
 import { filterNodes, type ActiveNodeFilter } from './utils';
 
 const Index = () => {
   const { data: summaries = [], isLoading, isError } = useDevices();
+  useLiveNodes(['devices', { pageSize: 50, page: 0 }], summaries.map(({ node }) => node.id));
   const [search, setSearch] = useState('');
   const [activeFilter, setActiveFilter] = useState<ActiveNodeFilter>('all');
 
