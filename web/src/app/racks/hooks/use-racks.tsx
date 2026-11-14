@@ -10,7 +10,7 @@ export const useRacks = ({ pageSize = 50, page = 0 }: Params = {}) => {
   const query = useQuery({
     queryKey: ['racks', { pageSize, page }],
     queryFn: () => getRacksAction(pageSize, page),
-    staleTime: 1000 * 60,
+    staleTime: 1000 * 60 * 30,
   });
 
   return query;
