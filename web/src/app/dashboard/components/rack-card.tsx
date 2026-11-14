@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import type { RackSummary } from '@/interfaces/rack-summary';
 import { badgeVariants, statusLabels } from '@/lib/rack-status';
-import { formatDate } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 
 interface Props {
   summary: RackSummary;
@@ -11,9 +11,10 @@ interface Props {
 
 export const RackCard = ({ summary }: Props) => {
   const { rack, status, latest, lastImpact } = summary;
+  const isAlarm = status === 'alarm';
 
   return (
-    <Card>
+    <Card className={cn(isAlarm && 'bg-destructive/5 ring-destructive/60')}>
       <CardHeader className="flex justify-between items-center">
         <CardTitle>
           <Link to={`/racks/${rack.id}`} className="hover:underline">{rack.name}</Link>
@@ -22,7 +23,7 @@ export const RackCard = ({ summary }: Props) => {
       </CardHeader>
       <CardContent>
         <p>{rack.location}</p>
-        <p className="text-lg font-bold">
+        <p className={cn('text-lg font-bold', isAlarm && 'text-destructive')}>
           {latest ? `${latest.tilt.toFixed(1)}° inclinación` : '— sin lectura actual'}
         </p>
         <p className="text-xs font-light">
