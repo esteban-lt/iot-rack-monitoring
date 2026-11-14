@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PageHeader } from '@/components/page-header';
 import { Filters, type StatusFilter } from '../racks/components/filters';
 import { useLiveRacks } from '../racks/hooks/use-live-racks';
 import { filterRacks } from '../racks/utils';
@@ -13,22 +14,26 @@ const Index = () => {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<StatusFilter>('all');
 
-  if (isLoading) return <DashboardSkeleton />;
-  if (isError) return <p>No se pudo cargar el dashboard.</p>;
-
   return (
     <>
-      <Summary summaries={summaries} />
+      <PageHeader title="Dashboard" description="Estado en tiempo real de todos los racks." />
+      {isLoading && <DashboardSkeleton />}
+      {isError && <p>No se pudo cargar el dashboard.</p>}
+      {!isLoading && !isError && (
+        <>
+          <Summary summaries={summaries} />
 
-      <Filters
-        summaries={summaries}
-        search={search}
-        onSearchChange={setSearch}
-        status={status}
-        onStatusChange={setStatus}
-      />
+          <Filters
+            summaries={summaries}
+            search={search}
+            onSearchChange={setSearch}
+            status={status}
+            onStatusChange={setStatus}
+          />
 
-      <RackGrid summaries={filterRacks(summaries, search, status)} />
+          <RackGrid summaries={filterRacks(summaries, search, status)} />
+        </>
+      )}
     </>
   );
 }

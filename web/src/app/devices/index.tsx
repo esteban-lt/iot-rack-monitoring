@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PageHeader } from '@/components/page-header';
 import { Filters } from './components/filters';
 import { columns } from './components/data-table/columns';
 import { DataTable } from './components/data-table/data-table';
@@ -11,20 +12,24 @@ const Index = () => {
   const [search, setSearch] = useState('');
   const [activeFilter, setActiveFilter] = useState<ActiveNodeFilter>('all');
 
-  if (isLoading) return <DevicesSkeleton />;
-  if (isError) return <p>No se pudieron cargar los dispositivos.</p>;
-
   return (
     <>
-      <Filters
-        summaries={summaries}
-        search={search}
-        onSearchChange={setSearch}
-        activeFilter={activeFilter}
-        onFilterChange={setActiveFilter}
-      />
+      <PageHeader title="Dispositivos" description="Nodos ESP32 registrados en ThingsBoard y su conexión." />
+      {isLoading && <DevicesSkeleton />}
+      {isError && <p>No se pudieron cargar los dispositivos.</p>}
+      {!isLoading && !isError && (
+        <>
+          <Filters
+            summaries={summaries}
+            search={search}
+            onSearchChange={setSearch}
+            activeFilter={activeFilter}
+            onFilterChange={setActiveFilter}
+          />
 
-      <DataTable columns={columns} data={filterNodes(summaries, search, activeFilter)} />
+          <DataTable columns={columns} data={filterNodes(summaries, search, activeFilter)} />
+        </>
+      )}
     </>
   );
 }
