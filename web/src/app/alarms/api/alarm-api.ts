@@ -27,4 +27,8 @@ export const alarmApi = {
   acknowledgeAlarm: async (alarmId: string): Promise<void> => {
     await thingsboardClient.post(`/api/alarm/${alarmId}/ack`);
   },
+
+  deleteAlarm: async (alarmId: string): Promise<void> => {
+    await thingsboardClient.delete(`/api/alarm/${alarmId}`);
+  },
 };

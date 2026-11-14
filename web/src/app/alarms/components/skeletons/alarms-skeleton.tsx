@@ -10,7 +10,7 @@ export const AlarmsSkeleton = () => {
           <Skeleton key={index} className="h-8 w-40" />
         ))}
       </div>
-      <TableSkeleton columns={6} rows={10} />
+      <TableSkeleton columns={7} rows={10} />
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Skeleton className="h-8 w-40" />
         <Skeleton className="h-8 w-48" />
