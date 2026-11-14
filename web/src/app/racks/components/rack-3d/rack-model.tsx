@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { Vector3, type Group } from 'three';
+import type { Group } from 'three';
 import type { RackStatus } from '@/interfaces/rack-summary';
 import { buildRack, disposeRack, rackMaterials, type RackParams } from '../../lib/rack-builder';
 import { createRackMotion } from '../../lib/rack-motion';
+import { floorLift, toModelTilt } from '../../lib/rack-tilt';
 import type { RackModelConfig } from '../../schemas/rack-model-schema';
 
 export interface RackImpact {
@@ -20,22 +21,13 @@ interface Props {
   impact?: RackImpact;
 }
 
-const TILT_EXAGGERATION = 1;
-
-// Map the firmware angles to model rotations (flip a sign if the model leans the wrong way)
-const FRONT_SIGN = -1;
-const SIDE_SIGN = 1;
-
 const statusColors: Record<Exclude<RackStatus, 'ok'>, string> = {
   warning: '#f59e0b',
   alarm: '#ef4444',
   offline: '#6b7280',
 };
 
-const point = new Vector3();
 const hsl = { h: 0, s: 0, l: 0 };
-
-const toDegrees = (degrees: number, sign: number) => (Number.isFinite(degrees) ? degrees * TILT_EXAGGERATION * sign : 0);
 
 export const RackModel = ({ config, tiltX, tiltY, status, impact }: Props) => {
   const invalidate = useThree((state) => state.invalidate);
@@ -50,11 +42,6 @@ export const RackModel = ({ config, tiltX, tiltY, status, impact }: Props) => {
   const shapeKey = JSON.stringify(shape);
   const colorsKey = JSON.stringify(colors);
   const rack = useMemo(() => buildRack(JSON.parse(shapeKey) as Partial<RackParams>), [shapeKey]);
-
-  // The firmware takes "front" from the side the sensor faces, so a sensor on the back mirrors both axes
-  const facing = config.sensorSide === 'back' ? -1 : 1;
-  const halfWidth = config.width / 2;
-  const halfDepth = config.depth / 2;
 
   useEffect(() => {
     motion.setLevels(rack.userData.levelHeights);
@@ -89,19 +76,16 @@ export const RackModel = ({ config, tiltX, tiltY, status, impact }: Props) => {
       motion.hit(x, z, impact.impactG);
     }
     invalidate();
-  }, [tiltX, tiltY, impact, facing, motion, invalidate]);
+  }, [tiltX, tiltY, impact, config.sensorSide, motion, invalidate]);
 
   useFrame((_, delta) => {
     if (!liftRef.current || !tiltRef.current || !swayRef.current) return;
 
-    motion.setTilt(toDegrees(tiltX, FRONT_SIGN * facing), toDegrees(tiltY, SIDE_SIGN * facing));
+    const tilt = toModelTilt(tiltX, tiltY, config.sensorSide);
+    motion.setTilt(tilt.x, tilt.z);
     motion.step(delta);
     motion.apply(tiltRef.current, swayRef.current, rack);
-
-    // Keeps the lowest foot on the floor instead of sinking through it
-    const { rotation } = tiltRef.current;
-    const footHeight = (x: number, z: number) => point.set(x * halfWidth, 0, z * halfDepth).applyEuler(rotation).y;
-    liftRef.current.position.y = -Math.min(footHeight(-1, -1), footHeight(-1, 1), footHeight(1, -1), footHeight(1, 1));
+    liftRef.current.position.y = floorLift(tiltRef.current.rotation, config.width, config.depth);
 
     if (motion.active()) invalidate();
   });

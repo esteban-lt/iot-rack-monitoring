@@ -5,6 +5,7 @@ import { thingsboardSocket } from '@/services/api/thingsboard-socket';
 const LIVE_KEYS = [
   ...[...TELEMETRY_KEYS, 'impact_g'].map((key) => ({ type: 'TIME_SERIES', key })),
   { type: 'ATTRIBUTE', key: 'active' },
+  { type: 'ATTRIBUTE', key: 'rack_uid' },
 ];
 
 export const rackSocket = {

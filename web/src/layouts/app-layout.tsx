@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Navigate, Outlet } from 'react-router'
 import { RealtimeStatus } from '@/components/realtime-status'
+import { Toaster } from '@/components/toaster'
 import { session } from '@/services/api/session'
 
 export default function AppLayout() {
@@ -33,6 +34,7 @@ export default function AppLayout() {
         <section className="flex flex-col gap-4 p-4">
           <Outlet />
         </section>
+        <Toaster />
       </SidebarInset>
     </SidebarProvider>
   )

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { hashKey, useQueryClient, type QueryKey } from '@tanstack/react-query';
 import type { RackSummary } from '@/interfaces/rack-summary';
 import type { EntityData } from '@/services/api/interfaces/get-entities-query-response';
-import { applyLiveValuesAction, mergeLatestValues } from '../actions/apply-live-values-action';
+import { applyLiveValuesAction, mergeLatestValues, RACK_LINK_QUERIES, rackTagChanged } from '../actions/apply-live-values-action';
 import { rackSocket } from '../api/rack-socket';
 
 export const useLiveRacks = (queryKey: QueryKey, nodeIds: string[]) => {
@@ -21,9 +21,19 @@ export const useLiveRacks = (queryKey: QueryKey, nodeIds: string[]) => {
     };
 
     return rackSocket.subscribeToNodes(nodeIdsKey.split(','), (nodes) => {
+      let rackLinksChanged = false;
+
       nodes.forEach(({ entityId, latest }) => {
-        latestByNodeId.set(entityId.id, mergeLatestValues(latestByNodeId.get(entityId.id), latest));
+        const previous = latestByNodeId.get(entityId.id);
+        const merged = mergeLatestValues(previous, latest);
+        if (rackTagChanged(previous, merged)) rackLinksChanged = true;
+        latestByNodeId.set(entityId.id, merged);
       });
+
+      if (rackLinksChanged) {
+        RACK_LINK_QUERIES.forEach((key) => queryClient.invalidateQueries({ queryKey: [key] }));
+        return;
+      }
 
       queryClient.setQueryData<RackSummary | RackSummary[]>(JSON.parse(queryHash), (cached) =>
         Array.isArray(cached) ? cached.map(applyLiveValues) : cached && applyLiveValues(cached),

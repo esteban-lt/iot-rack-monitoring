@@ -1,4 +1,4 @@
-import { useTable, type ColumnDef, type RowData } from "@tanstack/react-table"
+import { useTable, type ColumnDef, type OnChangeFn, type RowData, type RowSelectionState } from "@tanstack/react-table"
 
 import {
   Table,
@@ -14,16 +14,25 @@ import { features, type DataTableFeatures } from "./data-table-features"
 interface DataTableProps<TData extends RowData> {
   columns: ColumnDef<DataTableFeatures, TData>[]
   data: TData[]
+  getRowId?: (row: TData) => string
+  rowSelection?: RowSelectionState
+  onRowSelectionChange?: OnChangeFn<RowSelectionState>
 }
 
 export function DataTable<TData extends RowData>({
   columns,
   data,
+  getRowId,
+  rowSelection = {},
+  onRowSelectionChange,
 }: DataTableProps<TData>) {
   const table = useTable({
     features,
     data,
     columns,
+    getRowId,
+    state: { rowSelection },
+    onRowSelectionChange,
   })
 
   return (

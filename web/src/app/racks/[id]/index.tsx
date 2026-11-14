@@ -51,7 +51,7 @@ const Index = () => {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[3fr_2fr]">
-        <Rack3DCard summary={summary} />
+        <Rack3DCard summary={summary} alarmDeg={thresholds?.tiltAlarmDeg} />
         <div className="flex flex-col gap-4">
           <CurrentStateCard summary={summary} />
           {rack.nodeId && <NodeControlCard nodeId={rack.nodeId} status={status} />}

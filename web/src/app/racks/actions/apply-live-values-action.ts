@@ -10,6 +10,14 @@ export const mergeLatestValues = (previous: LatestValues = {}, next: LatestValue
   ATTRIBUTE: { ...previous.ATTRIBUTE, ...next.ATTRIBUTE },
 });
 
+// Queries that hold node-rack links, refetched when a node reads another rack's RFID tag
+export const RACK_LINK_QUERIES = ['devices', 'racks', 'dashboard', 'rack'];
+
+export const rackTagChanged = (previous: LatestValues | undefined, next: LatestValues) => {
+  const previousTag = previous?.ATTRIBUTE?.rack_uid?.value;
+  return previousTag !== undefined && previousTag !== next.ATTRIBUTE?.rack_uid?.value;
+};
+
 export const applyLiveValuesAction = (summary: RackSummary, latest: LatestValues): RackSummary => {
   const timeSeries = latest.TIME_SERIES ?? {};
   const status = resolveRackStatus(timeSeries.status?.value, latest.ATTRIBUTE?.active?.value === 'true');

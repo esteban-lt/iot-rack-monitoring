@@ -1,9 +1,11 @@
 import { createColumnHelper } from '@tanstack/react-table';
+import { Link } from 'react-router';
 import { Badge } from '@/components/ui/badge';
 import type { Alarm } from '@/interfaces/alarm';
 import { formatDate } from '@/lib/utils';
 import { isActive, isUnack, severityLabels, severityVariants } from '../../utils';
 import { AcknowledgeButton } from '../acknowledge-button';
+import { DeleteAlarmButton } from '../delete-alarm-button';
 import { type DataTableFeatures } from './data-table-features';
 
 const columnHelper = createColumnHelper<DataTableFeatures, Alarm>();
@@ -16,7 +18,12 @@ export const columns = columnHelper.columns([
   columnHelper.accessor('rackName', {
     id: 'rackName',
     header: 'Rack',
-    cell: (info) => <span className="font-bold">{info.getValue()}</span>,
+    cell: ({ row }) => {
+      const { rackId, rackName } = row.original;
+      return rackId
+        ? <Link to={`/racks/${rackId}`} className="font-bold hover:underline">{rackName}</Link>
+        : <span className="font-bold">{rackName ?? '—'}</span>;
+    },
   }),
   columnHelper.accessor('type', {
     header: 'Tipo',
@@ -41,9 +48,38 @@ export const columns = columnHelper.columns([
   columnHelper.display({
     id: 'actions',
     header: 'Acción',
-    cell: ({ row }) =>
-      isUnack(row.original) && <AcknowledgeButton alarmId={row.original.id} />,
+    cell: ({ row }) => (
+      <div className="flex items-center gap-1">
+        {isUnack(row.original) && <AcknowledgeButton alarmId={row.original.id} />}
+        <DeleteAlarmButton alarmId={row.original.id} />
+      </div>
+    ),
   }),
 ]);
+
+export const selectColumn = columnHelper.display({
+  id: 'select',
+  header: ({ table }) => (
+    <input
+      type="checkbox"
+      className="accent-primary"
+      aria-label="Seleccionar todas"
+      checked={table.getIsAllPageRowsSelected()}
+      ref={(input) => {
+        if (input) input.indeterminate = table.getIsSomePageRowsSelected();
+      }}
+      onChange={table.getToggleAllPageRowsSelectedHandler()}
+    />
+  ),
+  cell: ({ row }) => (
+    <input
+      type="checkbox"
+      className="accent-primary"
+      aria-label="Seleccionar alarma"
+      checked={row.getIsSelected()}
+      onChange={row.getToggleSelectedHandler()}
+    />
+  ),
+});
 
 export const columnsWithoutRack = columns.filter((column) => column.id !== 'rackName');

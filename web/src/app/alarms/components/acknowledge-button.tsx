@@ -1,15 +1,15 @@
 import { Button } from '@/components/ui/button';
-import { useAcknowledgeAlarm } from '../hooks/use-acknowledge-alarm';
+import { useAcknowledgeAlarms } from '../hooks/use-acknowledge-alarms';
 
 interface Props {
   alarmId: string;
 }
 
 export const AcknowledgeButton = ({ alarmId }: Props) => {
-  const { mutate, isPending } = useAcknowledgeAlarm();
+  const { mutate, isPending } = useAcknowledgeAlarms();
 
   return (
-    <Button variant="outline" disabled={isPending} onClick={() => mutate(alarmId)}>
+    <Button variant="outline" disabled={isPending} onClick={() => mutate([alarmId])}>
       {isPending ? 'Reconociendo...' : 'Reconocer'}
     </Button>
   );

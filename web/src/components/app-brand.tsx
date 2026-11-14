@@ -1,4 +1,4 @@
-import { WarehouseIcon } from 'lucide-react';
+import { AppLogo } from '@/components/app-logo';
 import { Link } from 'react-router';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 
@@ -8,7 +8,7 @@ export function AppBrand() {
       <SidebarMenuItem>
         <SidebarMenuButton size="lg" render={<Link to="/" />}>
           <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-            <WarehouseIcon className="size-4" />
+            <AppLogo className="size-5" />
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-medium">Monitoreo de racks</span>
