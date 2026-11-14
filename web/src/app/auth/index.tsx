@@ -1,4 +1,4 @@
-import { WarehouseIcon } from 'lucide-react';
+import { AppLogo } from '@/components/app-logo';
 import { Navigate } from 'react-router';
 import { session } from '@/services/api/session';
 import { LoginForm } from './components/login-form';
@@ -11,7 +11,7 @@ const Index = () => {
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex items-center justify-center gap-2 font-medium md:justify-start">
           <div className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
-            <WarehouseIcon className="size-4" />
+            <AppLogo className="size-4" />
           </div>
           Monitoreo de racks
         </div>
@@ -21,9 +21,7 @@ const Index = () => {
           </div>
         </div>
       </div>
-      <div className="hidden items-center justify-center bg-muted lg:flex">
-        <WarehouseIcon className="size-32 text-muted-foreground" />
-      </div>
+      <img src="/images/login.webp" alt="" className="hidden size-full object-cover lg:block" />
     </div>
   );
 }
