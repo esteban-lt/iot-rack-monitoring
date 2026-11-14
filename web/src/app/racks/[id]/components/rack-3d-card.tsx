@@ -4,12 +4,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { RackSummary } from '@/interfaces/rack-summary';
+import { HighlightToggle } from '../../components/rack-3d/highlight-toggle';
 import { useRackModel } from '../../hooks/use-rack-model';
+import { useTiltHighlight } from '../../hooks/use-tilt-highlight';
+import { highlightFactor } from '../../lib/rack-tilt';
 
 const RackScene = lazy(() => import('../../components/rack-3d/rack-scene'));
 
 interface Props {
   summary: RackSummary;
+  alarmDeg?: number;
 }
 
 const Stat = ({ label, value }: { label: string; value: string }) => (
@@ -19,16 +23,19 @@ const Stat = ({ label, value }: { label: string; value: string }) => (
   </div>
 );
 
-export const Rack3DCard = ({ summary }: Props) => {
+export const Rack3DCard = ({ summary, alarmDeg }: Props) => {
   const { rack, status, latest, lastImpact } = summary;
   const { data: config } = useRackModel(rack.id);
+  const [highlight, setHighlight] = useTiltHighlight();
+  const factor = highlightFactor(alarmDeg);
 
   return (
     <Card className="h-full">
       <CardHeader>
         <CardTitle>Vista 3D del rack</CardTitle>
         <CardDescription>Arrastra para rotar</CardDescription>
-        <CardAction>
+        <CardAction className="flex gap-2">
+          <HighlightToggle factor={factor} pressed={highlight} onPressedChange={setHighlight} />
           <Button variant="outline" size="sm" nativeButton={false} render={<Link to={`/racks/${rack.id}/model`} />}>
             Personalizar
           </Button>
@@ -45,6 +52,7 @@ export const Rack3DCard = ({ summary }: Props) => {
                   tiltY={latest?.tiltY ?? 0}
                   status={status}
                   impact={lastImpact}
+                  highlight={highlight ? factor : undefined}
                 />
               ) : (
                 <Skeleton className="size-full" />

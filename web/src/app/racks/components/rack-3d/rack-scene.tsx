@@ -2,9 +2,12 @@ import { useEffect, type ComponentProps } from 'react';
 import { ContactShadows, Line, OrbitControls } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
 import { DoubleSide, MathUtils, Shape, Vector3, type PerspectiveCamera } from 'three';
+import { RackGhost } from './rack-ghost';
 import { RackModel } from './rack-model';
 
-type Props = ComponentProps<typeof RackModel>;
+type Props = ComponentProps<typeof RackModel> & {
+  highlight?: number;
+};
 
 interface Controls {
   target: Vector3;
@@ -60,7 +63,7 @@ const Guides = ({ width, height, depth }: { width: number; height: number; depth
   );
 }
 
-const RackScene = (props: Props) => {
+const RackScene = ({ highlight, ...props }: Props) => {
   const { width, height, depth } = props.config;
 
   return (
@@ -69,6 +72,7 @@ const RackScene = (props: Props) => {
       <directionalLight position={[3, 6, 5]} intensity={2} />
 
       <RackModel {...props} />
+      {highlight && <RackGhost {...props} factor={highlight} />}
       <Guides width={width} height={height} depth={depth} />
 
       <Line points={[[0, 0, 0], [0, height + 0.4, 0]]} color="#888888" dashed dashSize={0.08} gapSize={0.06} />

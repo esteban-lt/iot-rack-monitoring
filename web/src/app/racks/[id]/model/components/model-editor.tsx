@@ -4,9 +4,12 @@ import { Link, useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { HighlightToggle } from '../../../components/rack-3d/highlight-toggle';
 import type { RackImpact } from '../../../components/rack-3d/rack-model';
 import { useSaveRackModel } from '../../../hooks/use-save-rack-model';
+import { useTiltHighlight } from '../../../hooks/use-tilt-highlight';
 import { resolveParams } from '../../../lib/rack-builder';
+import { highlightFactor } from '../../../lib/rack-tilt';
 import { DEFAULT_RACK_MODEL, type RackModelConfig } from '../../../schemas/rack-model-schema';
 import { ModelControls } from './model-controls';
 import { SliderField } from './slider-field';
@@ -17,11 +20,12 @@ interface Props {
   rackId: string;
   rackName: string;
   initialConfig: RackModelConfig;
+  alarmDeg?: number;
 }
 
 const degrees = (value: number) => `${value}°`;
 
-export const ModelEditor = ({ rackId, rackName, initialConfig }: Props) => {
+export const ModelEditor = ({ rackId, rackName, initialConfig, alarmDeg }: Props) => {
   const navigate = useNavigate();
   const rackPath = `/racks/${rackId}`;
   const [config, setConfig] = useState(initialConfig);
@@ -29,6 +33,8 @@ export const ModelEditor = ({ rackId, rackName, initialConfig }: Props) => {
   const [impact, setImpact] = useState<RackImpact>();
   const previewConfig = useDeferredValue(config);
   const { mutate, isPending, isError } = useSaveRackModel(rackId);
+  const [highlight, setHighlight] = useTiltHighlight();
+  const factor = highlightFactor(alarmDeg);
 
   const update = (changes: Partial<RackModelConfig>) => {
     const before = resolveParams(config);
@@ -69,6 +75,7 @@ export const ModelEditor = ({ rackId, rackName, initialConfig }: Props) => {
                 tiltY={simulation.tiltY}
                 status="ok"
                 impact={impact}
+                highlight={highlight ? factor : undefined}
               />
             </Suspense>
           </CardContent>
@@ -111,6 +118,7 @@ export const ModelEditor = ({ rackId, rackName, initialConfig }: Props) => {
                 onChange={(impactG) => setSimulation({ ...simulation, impactG })}
               />
               <div className="flex flex-wrap gap-2">
+                <HighlightToggle factor={factor} pressed={highlight} onPressedChange={setHighlight} />
                 <Button variant="outline" onClick={() => hit([0, -1])}>Golpe frontal</Button>
                 <Button variant="outline" onClick={() => hit([Math.random() < 0.5 ? -1 : 1, 0])}>Golpe lateral</Button>
               </div>
