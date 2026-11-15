@@ -10,7 +10,7 @@ export const DashboardSkeleton = () => {
         {range(4).map((index) => (
           <Card key={index}>
             <CardHeader>
-              <Skeleton className="h-5 w-full" />
+              <Skeleton className="h-5" />
             </CardHeader>
           </Card>
         ))}
@@ -27,7 +27,7 @@ export const DashboardSkeleton = () => {
             <CardContent className="flex flex-col gap-2">
               <Skeleton className="h-4 w-1/3" />
               <Skeleton className="h-6 w-1/2" />
-              <Skeleton className="h-3 w-full" />
+              <Skeleton className="h-3" />
               <Skeleton className="h-3 w-3/4" />
             </CardContent>
           </Card>

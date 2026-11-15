@@ -25,7 +25,7 @@ export const TableSkeleton = ({ columns, rows = 5 }: Props) => {
             <TableRow key={row}>
               {range(columns).map((column) => (
                 <TableCell key={column}>
-                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4" />
                 </TableCell>
               ))}
             </TableRow>

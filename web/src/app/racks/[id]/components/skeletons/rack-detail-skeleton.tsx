@@ -7,7 +7,7 @@ const ChartSkeleton = () => (
       <Skeleton className="h-5 w-40" />
     </CardHeader>
     <CardContent>
-      <Skeleton className="h-72 w-full" />
+      <Skeleton className="h-72" />
     </CardContent>
   </Card>
 );
