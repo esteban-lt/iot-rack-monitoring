@@ -6,9 +6,11 @@ interface Params {
   page?: number;
 }
 
+export const racksQueryKey = ({ pageSize = 50, page = 0 }: Params = {}) => ['racks', { pageSize, page }];
+
 export const useRacks = ({ pageSize = 50, page = 0 }: Params = {}) => {
   const query = useQuery({
-    queryKey: ['racks', { pageSize, page }],
+    queryKey: racksQueryKey({ pageSize, page }),
     queryFn: () => getRacksAction(pageSize, page),
     staleTime: 1000 * 60 * 30,
   });
