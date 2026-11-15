@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import type { RackSummary } from '@/interfaces/rack-summary';
 import { badgeVariants, statusLabels } from '@/lib/rack-status';
 import { RackFormDialog } from '../rack-form-dialog';
-import { type DataTableFeatures } from './data-table-features';
+import { type DataTableFeatures } from '@/components/data-table/data-table-features';
 
 const columnHelper = createColumnHelper<DataTableFeatures, RackSummary>();
 

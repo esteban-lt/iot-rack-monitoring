@@ -4,7 +4,7 @@ import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Filters, type StatusFilter } from './components/filters';
 import { columns } from './components/data-table/columns';
-import { DataTable } from './components/data-table/data-table';
+import { DataTable } from '@/components/data-table/data-table';
 import { RackFormDialog } from './components/rack-form-dialog';
 import { RacksSkeleton } from './components/skeletons/racks-skeleton';
 import { useLiveRacks } from './hooks/use-live-racks';
