@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { PageHeader } from '@/components/page-header';
 import { Filters } from './components/filters';
 import { columns } from './components/data-table/columns';
-import { DataTable } from './components/data-table/data-table';
+import { DataTable } from '@/components/data-table/data-table';
 import { DevicesSkeleton } from './components/skeletons/devices-skeleton';
 import { useDevices } from './hooks/use-devices';
 import { useLiveNodes } from './hooks/use-live-nodes';
