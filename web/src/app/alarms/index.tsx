@@ -44,9 +44,10 @@ const Index = () => {
       {!isLoading && (isError || !data) && <p>No se pudieron cargar las alarmas.</p>}
       {data && (
         <>
-          <Filters racks={racks} filters={filters} onFiltersChange={handleFiltersChange} />
-
-          {selected.length > 0 && <SelectionBar selected={selected} onDone={() => setRowSelection({})} />}
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <Filters racks={racks} filters={filters} onFiltersChange={handleFiltersChange} />
+            {selected.length > 0 && <SelectionBar selected={selected} onDone={() => setRowSelection({})} />}
+          </div>
 
           <DataTable
             columns={selectableColumns}
