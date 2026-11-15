@@ -23,6 +23,10 @@ describe('runInBatches', () => {
     expect(peak).toBe(5);
   });
 
+  it('does nothing for an empty list', async () => {
+    await expect(runInBatches([], failOn([]))).resolves.toEqual({ done: 0, failed: 0 });
+  });
+
   it('throws when every task fails', async () => {
     await expect(runInBatches([1, 2], failOn([1, 2]))).rejects.toThrow('All requests failed');
   });
