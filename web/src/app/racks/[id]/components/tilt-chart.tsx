@@ -35,8 +35,8 @@ export const TiltChart = ({ data, range, thresholds, isLoading }: Props) => {
           <YAxis unit="°" />
           {thresholds && (
             <>
-              <ReferenceLine y={thresholds.tiltWarnDeg} stroke="var(--chart-4)" strokeDasharray="4 4" ifOverflow="extendDomain" label="Advertencia" />
-              <ReferenceLine y={thresholds.tiltAlarmDeg} stroke="var(--destructive)" strokeDasharray="4 4" ifOverflow="extendDomain" label="Alarma" />
+              <ReferenceLine y={thresholds.tiltWarnDeg} stroke="var(--chart-4)" strokeDasharray="4 4" ifOverflow="extendDomain" label={{ value: 'Advertencia', position: 'insideTopRight' }} />
+              <ReferenceLine y={thresholds.tiltAlarmDeg} stroke="var(--destructive)" strokeDasharray="4 4" ifOverflow="extendDomain" label={{ value: 'Alarma', position: 'insideBottomRight' }} />
             </>
           )}
           <ChartTooltip content={<ChartTooltipContent labelFormatter={tooltipTime} />} />

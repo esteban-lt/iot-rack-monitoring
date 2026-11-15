@@ -26,7 +26,7 @@ export const ImpactsChart = ({ data, range, thresholds, isLoading }: Props) => {
           <XAxis dataKey="ts" tickFormatter={(ts) => formatTick(ts, range)} />
           <YAxis />
           {thresholds && (
-            <ReferenceLine y={thresholds.impactG} stroke="var(--destructive)" strokeDasharray="4 4" ifOverflow="extendDomain" label="Umbral" />
+            <ReferenceLine y={thresholds.impactG} stroke="var(--destructive)" strokeDasharray="4 4" ifOverflow="extendDomain" label={{ value: 'Umbral', position: 'insideBottomRight' }} />
           )}
           <ChartTooltip content={<ChartTooltipContent labelFormatter={tooltipTime} />} />
           <Bar dataKey="impactG" fill="var(--color-impactG)" radius={4} />
