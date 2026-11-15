@@ -102,7 +102,7 @@ export const thingsboardSocket = {
       subscriptions.delete(cmdId);
       send([{ type: `${command.type}_UNSUBSCRIBE`, cmdId }]);
 
-      // Closes when nothing is listening anymore (the delay avoids reconnecting on quick remounts)
+      // Close when idle; the delay avoids reconnecting on quick remounts
       if (!subscriptions.size) idleTimer = setTimeout(thingsboardSocket.disconnect, IDLE_CLOSE_DELAY_MS);
     };
   },

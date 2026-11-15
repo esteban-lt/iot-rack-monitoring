@@ -5,7 +5,6 @@ import { formatDate } from '@/lib/utils';
 
 const REFRESH_MS = 5000;
 
-// "hace 12 segundos", refreshed on its own; the exact date shows on hover
 export const RelativeTime = ({ ts }: { ts: number }) => {
   const [now, setNow] = useState(() => Date.now());
 
