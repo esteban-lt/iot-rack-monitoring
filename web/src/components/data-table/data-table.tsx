@@ -1,4 +1,4 @@
-import { useTable, type ColumnDef, type RowData } from "@tanstack/react-table"
+import { useTable, type ColumnDef, type OnChangeFn, type RowData, type RowSelectionState } from "@tanstack/react-table"
 
 import {
   Table,
@@ -14,16 +14,27 @@ import { features, type DataTableFeatures } from "./data-table-features"
 interface DataTableProps<TData extends RowData> {
   columns: ColumnDef<DataTableFeatures, TData>[]
   data: TData[]
+  getRowId?: (row: TData) => string
+  rowSelection?: RowSelectionState
+  onRowSelectionChange?: OnChangeFn<RowSelectionState>
+  onRowClick?: (row: TData) => void
 }
 
 export function DataTable<TData extends RowData>({
   columns,
   data,
+  getRowId,
+  rowSelection = {},
+  onRowSelectionChange,
+  onRowClick,
 }: DataTableProps<TData>) {
   const table = useTable({
     features,
     data,
     columns,
+    getRowId,
+    state: { rowSelection },
+    onRowSelectionChange,
   })
 
   return (
@@ -32,24 +43,22 @@ export function DataTable<TData extends RowData>({
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder ? null : (
-                      <table.FlexRender header={header} />
-                    )}
-                  </TableHead>
-                )
-              })}
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id}>
+                  {!header.isPlaceholder && <table.FlexRender header={header} />}
+                </TableHead>
+              ))}
             </TableRow>
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows?.length ? (
+          {table.getRowModel().rows.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
+                className={onRowClick && "cursor-pointer"}
+                onClick={onRowClick && (() => onRowClick(row.original))}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>

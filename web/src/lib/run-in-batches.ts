@@ -3,7 +3,7 @@ export interface BatchResult {
   failed: number;
 }
 
-// Runs one request per item, a few at a time, and counts how many failed instead of stopping at the first error
+// Runs a few requests at a time and counts failures instead of stopping at the first one
 export const runInBatches = async <T>(items: T[], task: (item: T) => Promise<unknown>, size = 5): Promise<BatchResult> => {
   let failed = 0;
 

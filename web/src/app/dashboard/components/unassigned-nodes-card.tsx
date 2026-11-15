@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { useDevices } from '@/app/devices/hooks/use-devices';
+import { devicesQueryKey, useDevices } from '@/app/devices/hooks/use-devices';
 import { useLiveNodes } from '@/app/devices/hooks/use-live-nodes';
 import { RelativeTime } from '@/components/relative-time';
 import { Badge } from '@/components/ui/badge';
@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export const UnassignedNodesCard = () => {
   const { data = [], isLoading } = useDevices();
-  useLiveNodes(['devices', { pageSize: 50, page: 0 }], data.map(({ node }) => node.id));
+  useLiveNodes(devicesQueryKey(), data.map(({ node }) => node.id));
   const nodes = data.filter(({ node }) => !node.rackId);
 
   return (

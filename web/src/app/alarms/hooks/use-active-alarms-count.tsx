@@ -11,7 +11,7 @@ export const useActiveAlarmsCount = () => {
     let previousCount: number | undefined;
 
     return alarmSocket.subscribeToActiveCount((nextCount) => {
-      // A different count means alarms were raised, cleared or acknowledged: refresh the alarm tables
+      // Any count change (raised, cleared, acked) refreshes the alarm tables
       if (previousCount !== undefined && nextCount !== previousCount) {
         queryClient.invalidateQueries({ queryKey: ['alarms'] });
       }

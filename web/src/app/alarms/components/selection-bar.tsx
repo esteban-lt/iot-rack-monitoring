@@ -19,7 +19,7 @@ export const SelectionBar = ({ selected, onDone }: Props) => {
   const remove = useDeleteAlarms();
   const unackIds = selected.filter(isUnack).map(({ id }) => id);
   const isPending = acknowledge.isPending || remove.isPending;
-  // On partial failures the selection stays, so the message remains visible and the rest can be retried
+  // Keep the selection on partial failures so the rest can be retried
   const clearIfAllDone = (result: BatchResult) => !result.failed && onDone();
   const error = acknowledge.isError || remove.isError
     ? 'No se pudo completar la acción.'

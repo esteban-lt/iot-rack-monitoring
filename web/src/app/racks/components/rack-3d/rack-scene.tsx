@@ -14,7 +14,7 @@ interface Controls {
   update: () => void;
 }
 
-// Frames the whole rack whenever its size or the canvas shape changes, keeping the viewing angle
+// Refits the camera on rack or canvas resize, keeping the viewing angle
 const CameraFit = ({ width, height, depth }: { width: number; height: number; depth: number }) => {
   const camera = useThree((state) => state.camera as PerspectiveCamera);
   const controls = useThree((state) => state.controls as Controls | null);
@@ -42,7 +42,7 @@ const arrowShape = new Shape()
   .moveTo(-0.05, 0).lineTo(0.05, 0).lineTo(0.05, 0.22).lineTo(0.13, 0.22)
   .lineTo(0, 0.4).lineTo(-0.13, 0.22).lineTo(-0.05, 0.22).closePath();
 
-// Floor grid and an arrow on the aisle side that marks the front of the rack
+// Floor grid and an arrow marking the front (aisle side)
 const Guides = ({ width, height, depth }: { width: number; height: number; depth: number }) => {
   const span = Math.max(4, Math.ceil(Math.max(width, depth) * 1.6));
   const arrowScale = MathUtils.clamp(Math.max(width, height) / 3, 1, 3);
@@ -63,7 +63,7 @@ const Guides = ({ width, height, depth }: { width: number; height: number; depth
   );
 }
 
-// Checked before mounting the canvas: without WebGL three.js throws and would take down the whole page
+// Without WebGL, three.js throws and would break the whole page
 const supportsWebGL = (() => {
   try {
     const context = document.createElement('canvas').getContext('webgl2') ?? document.createElement('canvas').getContext('webgl');

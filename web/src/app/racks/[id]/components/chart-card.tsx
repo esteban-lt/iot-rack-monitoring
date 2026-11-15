@@ -17,7 +17,7 @@ export const ChartCard = ({ title, isEmpty, isLoading, children }: Props) => {
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <Skeleton className="h-72 w-full" />
+          <Skeleton className="h-72" />
         ) : isEmpty ? (
           <p className="text-sm text-muted-foreground">Sin datos en este periodo.</p>
         ) : (

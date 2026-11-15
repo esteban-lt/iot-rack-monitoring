@@ -1,7 +1,7 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import type { NodeSummary } from '@/interfaces/node-summary';
 import { formatDate } from '@/lib/utils';
-import { type DataTableFeatures } from './data-table-features';
+import { type DataTableFeatures } from '@/components/data-table/data-table-features';
 
 const columnHelper = createColumnHelper<DataTableFeatures, NodeSummary>();
 

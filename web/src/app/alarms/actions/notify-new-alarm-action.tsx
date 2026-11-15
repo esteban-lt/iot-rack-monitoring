@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { severityLabels } from '../utils';
 import { getAlarmsAction } from './get-alarms-action';
 
-// Shows the newest active alarm; with several new ones at once it mentions how many more there are
+// Shows the newest active alarm and how many more arrived with it
 export const notifyNewAlarmAction = async (newCount: number) => {
   const { alarms } = await getAlarmsAction({ severity: 'all', status: 'active', nodeId: 'all' }, 1);
   const alarm = alarms[0];

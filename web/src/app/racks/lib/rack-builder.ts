@@ -282,8 +282,7 @@ export const buildRack = (input: Partial<RackParams> = {}) => {
     return m;
   };
 
-  // Slots stand out by slotRelief, so the post face is pulled in by the same amount:
-  // the overall depth stays exactly `depth`.
+  // Post faces are pulled in by slotRelief so the slots keep the total depth
   const zFace = Dp / 2 - D.slotRelief;
   const xPost = W / 2 - p / 2;
   const zPost = zFace - p / 2;
