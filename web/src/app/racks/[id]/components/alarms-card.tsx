@@ -1,5 +1,5 @@
 import { columnsWithoutRack } from '@/app/alarms/components/data-table/columns';
-import { DataTable } from '@/app/alarms/components/data-table/data-table';
+import { DataTable } from '@/components/data-table/data-table';
 import { useAlarms } from '@/app/alarms/hooks/use-alarms';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 

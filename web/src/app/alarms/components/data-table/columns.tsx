@@ -6,7 +6,7 @@ import { formatDate } from '@/lib/utils';
 import { isActive, isUnack, severityLabels, severityVariants } from '../../utils';
 import { AcknowledgeButton } from '../acknowledge-button';
 import { DeleteAlarmButton } from '../delete-alarm-button';
-import { type DataTableFeatures } from './data-table-features';
+import { type DataTableFeatures } from '@/components/data-table/data-table-features';
 
 const columnHelper = createColumnHelper<DataTableFeatures, Alarm>();
 

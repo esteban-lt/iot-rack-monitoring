@@ -5,7 +5,7 @@ import { useRacks } from '../racks/hooks/use-racks';
 import { Filters } from './components/filters';
 import { AlarmsSkeleton } from './components/skeletons/alarms-skeleton';
 import { columns, selectColumn } from './components/data-table/columns';
-import { DataTable } from './components/data-table/data-table';
+import { DataTable } from '@/components/data-table/data-table';
 import { SelectionBar } from './components/selection-bar';
 import { TablePagination } from './components/table-pagination';
 import { useAlarms } from './hooks/use-alarms';

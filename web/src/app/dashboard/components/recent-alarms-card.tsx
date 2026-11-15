@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import { columns } from '@/app/alarms/components/data-table/columns';
-import { DataTable } from '@/app/alarms/components/data-table/data-table';
+import { DataTable } from '@/components/data-table/data-table';
 import { useAlarms } from '@/app/alarms/hooks/use-alarms';
 import { TableSkeleton } from '@/components/skeletons/table-skeleton';
 import { Button } from '@/components/ui/button';
