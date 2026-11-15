@@ -26,8 +26,8 @@ export const SelectionBar = ({ selected, onDone }: Props) => {
     : failureMessage(acknowledge.data) ?? failureMessage(remove.data);
 
   return (
-    <div className="flex flex-wrap items-center gap-2 rounded-md border bg-muted/50 p-2 text-sm">
-      <span className="px-2">{selected.length} {selected.length === 1 ? 'seleccionada' : 'seleccionadas'}</span>
+    <div className="flex flex-wrap items-center gap-2 text-sm">
+      <span>{selected.length} {selected.length === 1 ? 'seleccionada' : 'seleccionadas'}</span>
       <Button
         variant="outline"
         disabled={isPending || !unackIds.length}

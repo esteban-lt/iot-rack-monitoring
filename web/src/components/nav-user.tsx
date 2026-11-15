@@ -45,7 +45,7 @@ const UserInfo = ({ user }: { user: User }) => (
     </Avatar>
     <div className="grid flex-1 leading-tight">
       <span className="truncate font-medium">{user.name}</span>
-      <span className="truncate text-xs">{user.email}</span>
+      {user.name !== user.email && <span className="truncate text-xs">{user.email}</span>}
     </div>
   </>
 )

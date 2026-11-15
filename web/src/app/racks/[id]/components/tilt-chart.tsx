@@ -8,9 +8,8 @@ import {
   type ChartConfig,
 } from '@/components/ui/chart';
 import type { Thresholds } from '@/interfaces/thresholds';
-import { formatDate } from '@/lib/utils';
 import type { HistoryRange, TelemetryPoint } from '../../interfaces/rack-history';
-import { formatTick } from '../utils';
+import { formatTick, tooltipTime } from '../utils';
 import { ChartCard } from './chart-card';
 
 interface Props {
@@ -36,11 +35,11 @@ export const TiltChart = ({ data, range, thresholds, isLoading }: Props) => {
           <YAxis unit="°" />
           {thresholds && (
             <>
-              <ReferenceLine y={thresholds.tiltWarnDeg} stroke="var(--chart-4)" strokeDasharray="4 4" ifOverflow="extendDomain" label="Advertencia" />
-              <ReferenceLine y={thresholds.tiltAlarmDeg} stroke="var(--destructive)" strokeDasharray="4 4" ifOverflow="extendDomain" label="Alarma" />
+              <ReferenceLine y={thresholds.tiltWarnDeg} stroke="var(--chart-4)" strokeDasharray="4 4" ifOverflow="extendDomain" label={{ value: 'Advertencia', position: 'insideTopRight' }} />
+              <ReferenceLine y={thresholds.tiltAlarmDeg} stroke="var(--destructive)" strokeDasharray="4 4" ifOverflow="extendDomain" label={{ value: 'Alarma', position: 'insideBottomRight' }} />
             </>
           )}
-          <ChartTooltip content={<ChartTooltipContent labelFormatter={(ts) => formatDate(Number(ts))} />} />
+          <ChartTooltip content={<ChartTooltipContent labelFormatter={tooltipTime} />} />
           <ChartLegend content={<ChartLegendContent />} />
           <Line dataKey="tilt" stroke="var(--color-tilt)" dot={false} />
           <Line dataKey="tiltX" stroke="var(--color-tiltX)" dot={false} />

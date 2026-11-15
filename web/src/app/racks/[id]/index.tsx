@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { badgeVariants, statusLabels } from '@/lib/rack-status';
 import type { HistoryRange } from '../interfaces/rack-history';
+import { RackLoadError } from '../components/rack-load-error';
 import { useLiveRacks } from '../hooks/use-live-racks';
 import { useRack } from '../hooks/use-rack';
 import { useRackHistory } from '../hooks/use-rack-history';
@@ -31,7 +32,7 @@ const Index = () => {
   const { data: thresholds } = useThresholds(summary?.rack.nodeId);
 
   if (isLoading) return <RackDetailSkeleton />;
-  if (isError || !summary) return <p>No se pudo cargar el rack.</p>;
+  if (isError || !summary) return <RackLoadError title="No se pudo cargar el rack" />;
 
   const { rack, status, latest } = summary;
 

@@ -12,6 +12,6 @@ export const runInBatches = async <T>(items: T[], task: (item: T) => Promise<unk
     failed += results.filter(({ status }) => status === 'rejected').length;
   }
 
-  if (failed === items.length) throw new Error('All requests failed');
+  if (items.length && failed === items.length) throw new Error('All requests failed');
   return { done: items.length - failed, failed };
 }

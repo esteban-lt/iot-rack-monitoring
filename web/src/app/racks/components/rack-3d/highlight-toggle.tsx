@@ -1,3 +1,4 @@
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { Toggle } from '@/components/ui/toggle';
 
 interface Props {
@@ -15,6 +16,7 @@ export const HighlightToggle = ({ factor, pressed, onPressedChange }: Props) => 
       onPressedChange={onPressedChange}
       title="Muestra un contorno con la inclinación multiplicada para que se note a simple vista"
     >
+      {pressed ? <EyeIcon /> : <EyeOffIcon />}
       Realzar ×{factor}
     </Toggle>
   );

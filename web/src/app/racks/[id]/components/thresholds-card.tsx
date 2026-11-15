@@ -41,8 +41,7 @@ const ThresholdField = ({ control, name, label, description, triggerAlso }: Thre
           onChange={(event) => field.onChange(event.target.valueAsNumber)}
           aria-invalid={fieldState.invalid}
         />
-        <FieldDescription>{description}</FieldDescription>
-        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+        {fieldState.invalid ? <FieldError errors={[fieldState.error]} /> : <FieldDescription>{description}</FieldDescription>}
       </Field>
     )}
   />

@@ -1,8 +1,7 @@
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
-import { formatDate } from '@/lib/utils';
 import type { HistoryRange, TelemetryPoint } from '../../interfaces/rack-history';
-import { formatTick } from '../utils';
+import { formatTick, tooltipTime } from '../utils';
 import { ChartCard } from './chart-card';
 
 interface Props {
@@ -12,7 +11,7 @@ interface Props {
 }
 
 const chartConfig = {
-  vibRms: { label: 'Vibración (g)', color: 'var(--chart-1)' },
+  vibRms: { label: 'Vibración', color: 'var(--chart-1)' },
 } satisfies ChartConfig;
 
 export const VibrationChart = ({ data, range, isLoading }: Props) => {
@@ -23,7 +22,7 @@ export const VibrationChart = ({ data, range, isLoading }: Props) => {
           <CartesianGrid vertical={false} />
           <XAxis dataKey="ts" type="number" domain={['dataMin', 'dataMax']} tickFormatter={(ts) => formatTick(ts, range)} />
           <YAxis />
-          <ChartTooltip content={<ChartTooltipContent labelFormatter={(ts) => formatDate(Number(ts))} />} />
+          <ChartTooltip content={<ChartTooltipContent labelFormatter={tooltipTime} />} />
           <Line dataKey="vibRms" stroke="var(--color-vibRms)" dot={false} />
         </LineChart>
       </ChartContainer>
