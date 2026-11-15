@@ -43,7 +43,7 @@ const UserInfo = ({ user }: { user: User }) => (
     <Avatar>
       <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
     </Avatar>
-    <div className="grid flex-1 text-left text-sm leading-tight">
+    <div className="grid flex-1 leading-tight">
       <span className="truncate font-medium">{user.name}</span>
       <span className="truncate text-xs">{user.email}</span>
     </div>
@@ -68,7 +68,7 @@ export function NavUser() {
             }
           >
             <UserInfo user={user} />
-            <ChevronsUpDownIcon className="ml-auto size-4" />
+            <ChevronsUpDownIcon className="ml-auto" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-fit"

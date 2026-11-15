@@ -7,10 +7,10 @@ export function AppBrand() {
     <SidebarMenu>
       <SidebarMenuItem>
         <SidebarMenuButton size="lg" render={<Link to="/" />}>
-          <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+          <div className="flex size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
             <AppLogo className="size-5" />
           </div>
-          <div className="grid flex-1 text-left text-sm leading-tight">
+          <div className="grid flex-1 leading-tight">
             <span className="truncate font-medium">Monitoreo de racks</span>
             <span className="truncate text-xs">Sistema IoT</span>
           </div>
