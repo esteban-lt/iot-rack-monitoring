@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import path from 'path'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import tailwindcss from "@tailwindcss/vite"
@@ -13,7 +14,11 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": path.resolve(import.meta.dirname, "./src"),
     },
+  },
+  test: {
+    include: ['test/**/*.test.ts'],
+    environment: 'node',
   },
 })
