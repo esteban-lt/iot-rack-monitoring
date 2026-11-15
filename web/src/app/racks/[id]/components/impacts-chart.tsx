@@ -2,9 +2,8 @@ import { Bar, BarChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from 'recha
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
 import type { ImpactEvent } from '@/interfaces/impact-event';
 import type { Thresholds } from '@/interfaces/thresholds';
-import { formatDate } from '@/lib/utils';
 import type { HistoryRange } from '../../interfaces/rack-history';
-import { formatTick } from '../utils';
+import { formatTick, tooltipTime } from '../utils';
 import { ChartCard } from './chart-card';
 
 interface Props {
@@ -15,7 +14,7 @@ interface Props {
 }
 
 const chartConfig = {
-  impactG: { label: 'Impacto (g)', color: 'var(--chart-1)' },
+  impactG: { label: 'Impacto', color: 'var(--chart-1)' },
 } satisfies ChartConfig;
 
 export const ImpactsChart = ({ data, range, thresholds, isLoading }: Props) => {
@@ -29,7 +28,7 @@ export const ImpactsChart = ({ data, range, thresholds, isLoading }: Props) => {
           {thresholds && (
             <ReferenceLine y={thresholds.impactG} stroke="var(--destructive)" strokeDasharray="4 4" ifOverflow="extendDomain" label="Umbral" />
           )}
-          <ChartTooltip content={<ChartTooltipContent labelFormatter={(ts) => formatDate(Number(ts))} />} />
+          <ChartTooltip content={<ChartTooltipContent labelFormatter={tooltipTime} />} />
           <Bar dataKey="impactG" fill="var(--color-impactG)" radius={4} />
         </BarChart>
       </ChartContainer>

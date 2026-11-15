@@ -17,6 +17,8 @@ const TELEMETRY_FIELDS = {
   vib_rms: 'vibRms',
 } as const;
 
+const round = (value: string) => Math.round(Number(value) * 100) / 100;
+
 export const getRackHistoryAction = async (nodeId: string, range: HistoryRange): Promise<RackHistory> => {
   const { durationMs, intervalMs } = RANGES[range];
   const endTs = Date.now();
@@ -30,14 +32,14 @@ export const getRackHistoryAction = async (nodeId: string, range: HistoryRange):
   const points = new Map<number, TelemetryPoint>();
   Object.entries(TELEMETRY_FIELDS).forEach(([key, field]) => {
     telemetry[key]?.forEach(({ ts, value }) => {
-      points.set(ts, { ...points.get(ts), ts, [field]: Number(value) });
+      points.set(ts, { ...points.get(ts), ts, [field]: round(value) });
     });
   });
 
   return {
     telemetry: [...points.values()].sort((a, b) => a.ts - b.ts),
     impacts: (impacts.impact_g ?? [])
-      .map(({ ts, value }) => ({ ts, impactG: Number(value) }))
+      .map(({ ts, value }) => ({ ts, impactG: round(value) }))
       .sort((a, b) => a.ts - b.ts),
   };
 }
