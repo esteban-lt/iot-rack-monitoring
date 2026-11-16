@@ -7,6 +7,7 @@ import 'package:rack_monitoring/core/theme/theme_mode_provider.dart';
 import 'package:rack_monitoring/data/models/alarm.dart';
 import 'package:rack_monitoring/data/models/session_tokens.dart';
 import 'package:rack_monitoring/data/repositories/alarm_repository.dart';
+import 'package:rack_monitoring/data/services/nfc_service.dart';
 import 'package:rack_monitoring/data/services/session_storage.dart';
 import 'package:rack_monitoring/features/alarms/view_models/alarm_count_providers.dart';
 import 'package:rack_monitoring/features/racks/view_models/racks_view_model.dart';
@@ -15,6 +16,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 class FakeAlarmRepository extends Fake implements AlarmRepository {
   @override
   Future<List<Alarm>> getAlarms({required int limit}) async => [];
+}
+
+class FakeNfcService extends Fake implements NfcService {
+  @override
+  Future<NfcStatus> checkStatus() async => NfcStatus.unsupported;
 }
 
 Future<void> pumpApp(WidgetTester tester, {required bool hasSession}) async {
@@ -33,6 +39,7 @@ Future<void> pumpApp(WidgetTester tester, {required bool hasSession}) async {
         activeAlarmCountProvider.overrideWithValue(const AsyncData(0)),
         unacknowledgedAlarmCountProvider.overrideWithValue(const AsyncData(3)),
         alarmRepositoryProvider.overrideWithValue(FakeAlarmRepository()),
+        nfcServiceProvider.overrideWithValue(FakeNfcService()),
       ],
       child: const App(),
     ),
@@ -74,5 +81,15 @@ void main() {
     await pumpApp(tester, hasSession: true);
 
     expect(find.widgetWithText(Badge, '3'), findsOneWidget);
+  });
+
+  testWidgets('checks NFC when the scan tab is opened', (tester) async {
+    await pumpApp(tester, hasSession: true);
+    expect(find.text('Este dispositivo no tiene NFC'), findsNothing);
+
+    await tester.tap(find.widgetWithText(NavigationDestination, 'Escanear'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Este dispositivo no tiene NFC'), findsOneWidget);
   });
 }
