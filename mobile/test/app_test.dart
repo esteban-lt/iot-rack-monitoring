@@ -6,6 +6,7 @@ import 'package:rack_monitoring/app.dart';
 import 'package:rack_monitoring/core/theme/theme_mode_provider.dart';
 import 'package:rack_monitoring/data/models/alarm.dart';
 import 'package:rack_monitoring/data/models/history_range.dart';
+import 'package:rack_monitoring/data/models/node_summary.dart';
 import 'package:rack_monitoring/data/models/rack.dart';
 import 'package:rack_monitoring/data/models/rack_status.dart';
 import 'package:rack_monitoring/data/models/rack_summary.dart';
@@ -15,6 +16,7 @@ import 'package:rack_monitoring/data/repositories/alarm_repository.dart';
 import 'package:rack_monitoring/data/services/nfc_service.dart';
 import 'package:rack_monitoring/data/services/session_storage.dart';
 import 'package:rack_monitoring/features/alarms/view_models/alarm_count_providers.dart';
+import 'package:rack_monitoring/features/devices/view_models/devices_view_model.dart';
 import 'package:rack_monitoring/features/racks/view_models/rack_detail_view_model.dart';
 import 'package:rack_monitoring/features/racks/view_models/racks_view_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,6 +31,19 @@ final alarm = Alarm(
   createdAt: readAt,
   isActive: true,
   isAcknowledged: false,
+);
+
+final node = NodeSummary(
+  id: 'node-1',
+  name: 'Nodo-04',
+  isOnline: true,
+  mac: '24:6F:28:AA:BB:CC',
+  ip: '192.168.1.20',
+  firmwareVersion: '1.2.0',
+  signalDbm: -61,
+  lastSeen: readAt,
+  rackId: 'rack-1',
+  rackName: 'B-02',
 );
 
 final rackInAlarm = RackSummary(
@@ -58,6 +73,7 @@ Future<void> pumpApp(
   required bool hasSession,
   List<RackSummary> summaries = const [],
   List<Alarm> alarms = const [],
+  List<NodeSummary> nodes = const [],
 }) async {
   FlutterSecureStorage.setMockInitialValues({});
   SharedPreferences.setMockInitialValues({});
@@ -71,6 +87,7 @@ Future<void> pumpApp(
         sessionStorageProvider.overrideWithValue(session),
         sharedPreferencesProvider.overrideWithValue(await SharedPreferences.getInstance()),
         rackSummariesProvider.overrideWithValue(AsyncData(summaries)),
+        nodeSummariesProvider.overrideWithValue(AsyncData(nodes)),
         thresholdsProvider.overrideWith(
           (ref, nodeId) => const Thresholds(tiltWarnDeg: 3, tiltAlarmDeg: 5, impactG: 1.8),
         ),
@@ -141,7 +158,7 @@ void main() {
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
 
     // An overflow fails the test on any of these screens
-    await pumpApp(tester, hasSession: true, summaries: [rackInAlarm], alarms: [alarm]);
+    await pumpApp(tester, hasSession: true, summaries: [rackInAlarm], alarms: [alarm], nodes: [node]);
     expect(find.textContaining('B-02', findRichText: true), findsOneWidget);
 
     await tester.tap(find.textContaining('B-02', findRichText: true));
@@ -155,6 +172,10 @@ void main() {
     await tester.tap(find.widgetWithText(NavigationDestination, 'Escanear'));
     await tester.pumpAndSettle();
     expect(find.text('Este dispositivo no tiene NFC'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(NavigationDestination, 'Dispositivos'));
+    await tester.pumpAndSettle();
+    expect(find.text('Nodo-04'), findsOneWidget);
   });
 
   testWidgets('the login fits a small screen with large text', (tester) async {
