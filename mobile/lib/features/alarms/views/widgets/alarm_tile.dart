@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:rack_monitoring/core/utils/date_format.dart';
 import 'package:rack_monitoring/data/models/alarm.dart';
 import 'package:rack_monitoring/shared/widgets/status_badge.dart';
@@ -38,27 +39,33 @@ class AlarmTile extends StatelessWidget {
           ),
         ),
       ),
-      child: ListTile(
-        onTap: onTap,
-        title: Wrap(
-          crossAxisAlignment: WrapCrossAlignment.end,
-          spacing: 8,
-          children: [
-            Text(rackName, style: theme.textTheme.titleMedium),
-            Text(formatTime(alarm.createdAt), style: muted),
-          ],
+      // Screen readers can't swipe the tile, so they get the same action by name
+      child: Semantics(
+        customSemanticsActions: {
+          if (!alarm.isAcknowledged) const CustomSemanticsAction(label: 'Reconocer'): onAcknowledge,
+        },
+        child: ListTile(
+          onTap: onTap,
+          title: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.end,
+            spacing: 8,
+            children: [
+              Text(rackName, style: theme.textTheme.titleMedium),
+              Text(formatTime(alarm.createdAt), style: muted),
+            ],
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(alarm.type),
+              Text(
+                alarm.isAcknowledged ? 'Reconocida' : '● Sin reconocer',
+                style: alarm.isAcknowledged ? muted : theme.textTheme.labelMedium,
+              ),
+            ],
+          ),
+          trailing: StatusBadge(alarm.severity.tone, label: alarm.severity.label),
         ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(alarm.type),
-            Text(
-              alarm.isAcknowledged ? 'Reconocida' : '● Sin reconocer',
-              style: alarm.isAcknowledged ? muted : theme.textTheme.labelMedium,
-            ),
-          ],
-        ),
-        trailing: StatusBadge(alarm.severity.tone, label: alarm.severity.label),
       ),
     );
   }
