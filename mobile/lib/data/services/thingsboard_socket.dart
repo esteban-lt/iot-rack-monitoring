@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rack_monitoring/core/config/env.dart';
 import 'package:rack_monitoring/core/network/session_refresher.dart';
@@ -34,6 +35,9 @@ class ThingsboardSocket {
   final SessionStorage _session;
   final SessionRefresher _refresher;
   final _subscriptions = <int, _Subscription>{};
+
+  // True while the connection is lost and the socket is trying to get it back
+  final isReconnecting = ValueNotifier(false);
   WebSocketChannel? _channel;
   Timer? _reconnectTimer;
   bool _isConnecting = false;
@@ -68,6 +72,7 @@ class ThingsboardSocket {
     _reconnectTimer?.cancel();
     _channel?.sink.close();
     _channel = null;
+    isReconnecting.value = false;
   }
 
   Future<void> _connect() async {
@@ -82,6 +87,7 @@ class ThingsboardSocket {
 
       _channel = channel;
       _reconnectAttempts = 0;
+      isReconnecting.value = false;
       channel.stream.listen(_onMessage, onDone: () => _onClosed(channel), onError: (_) {});
       channel.sink.add(
         jsonEncode({
@@ -113,6 +119,7 @@ class ThingsboardSocket {
   void _scheduleReconnect() {
     if (_subscriptions.isEmpty) return;
 
+    isReconnecting.value = true;
     final delay = Duration(seconds: pow(2, _reconnectAttempts++).toInt());
     _reconnectTimer = Timer(delay < _maxReconnectDelay ? delay : _maxReconnectDelay, _connect);
   }

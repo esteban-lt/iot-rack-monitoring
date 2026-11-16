@@ -5,17 +5,47 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rack_monitoring/app.dart';
 import 'package:rack_monitoring/core/theme/theme_mode_provider.dart';
 import 'package:rack_monitoring/data/models/alarm.dart';
+import 'package:rack_monitoring/data/models/history_range.dart';
+import 'package:rack_monitoring/data/models/rack.dart';
+import 'package:rack_monitoring/data/models/rack_status.dart';
+import 'package:rack_monitoring/data/models/rack_summary.dart';
 import 'package:rack_monitoring/data/models/session_tokens.dart';
+import 'package:rack_monitoring/data/models/thresholds.dart';
 import 'package:rack_monitoring/data/repositories/alarm_repository.dart';
 import 'package:rack_monitoring/data/services/nfc_service.dart';
 import 'package:rack_monitoring/data/services/session_storage.dart';
 import 'package:rack_monitoring/features/alarms/view_models/alarm_count_providers.dart';
+import 'package:rack_monitoring/features/racks/view_models/rack_detail_view_model.dart';
 import 'package:rack_monitoring/features/racks/view_models/racks_view_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+final readAt = DateTime(2026, 11, 15, 9, 41);
+
+final alarm = Alarm(
+  id: 'alarm-1',
+  nodeId: 'node-1',
+  type: 'Inclinación crítica',
+  severity: AlarmSeverity.critical,
+  createdAt: readAt,
+  isActive: true,
+  isAcknowledged: false,
+);
+
+final rackInAlarm = RackSummary(
+  rack: const Rack(id: 'rack-1', name: 'B-02', location: 'Pasillo B', nodeId: 'node-1', nodeName: 'Nodo-04'),
+  status: RackStatus.alarm,
+  latest: (ts: readAt, tilt: 5.8, vibrationRms: 0.1),
+  lastSeen: readAt,
+  lastImpact: (ts: readAt, impactG: 2.35),
+);
+
 class FakeAlarmRepository extends Fake implements AlarmRepository {
+  FakeAlarmRepository([this.alarms = const []]);
+
+  final List<Alarm> alarms;
+
   @override
-  Future<List<Alarm>> getAlarms({required int limit}) async => [];
+  Future<List<Alarm>> getAlarms({required int limit}) async => alarms;
 }
 
 class FakeNfcService extends Fake implements NfcService {
@@ -23,7 +53,12 @@ class FakeNfcService extends Fake implements NfcService {
   Future<NfcStatus> checkStatus() async => NfcStatus.unsupported;
 }
 
-Future<void> pumpApp(WidgetTester tester, {required bool hasSession}) async {
+Future<void> pumpApp(
+  WidgetTester tester, {
+  required bool hasSession,
+  List<RackSummary> summaries = const [],
+  List<Alarm> alarms = const [],
+}) async {
   FlutterSecureStorage.setMockInitialValues({});
   SharedPreferences.setMockInitialValues({});
 
@@ -35,10 +70,15 @@ Future<void> pumpApp(WidgetTester tester, {required bool hasSession}) async {
       overrides: [
         sessionStorageProvider.overrideWithValue(session),
         sharedPreferencesProvider.overrideWithValue(await SharedPreferences.getInstance()),
-        rackSummariesProvider.overrideWithValue(const AsyncData([])),
+        rackSummariesProvider.overrideWithValue(AsyncData(summaries)),
+        thresholdsProvider.overrideWith(
+          (ref, nodeId) => const Thresholds(tiltWarnDeg: 3, tiltAlarmDeg: 5, impactG: 1.8),
+        ),
+        tiltHistoryProvider.overrideWith((ref, query) => <TiltPoint>[(ts: readAt, tilt: 5.8)]),
+        rackAlarmsProvider.overrideWith((ref, nodeId) => alarms),
         activeAlarmCountProvider.overrideWithValue(const AsyncData(0)),
         unacknowledgedAlarmCountProvider.overrideWithValue(const AsyncData(3)),
-        alarmRepositoryProvider.overrideWithValue(FakeAlarmRepository()),
+        alarmRepositoryProvider.overrideWithValue(FakeAlarmRepository(alarms)),
         nfcServiceProvider.overrideWithValue(FakeNfcService()),
       ],
       child: const App(),
@@ -91,5 +131,41 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Este dispositivo no tiene NFC'), findsOneWidget);
+  });
+
+  testWidgets('fits a small screen with large text', (tester) async {
+    tester.view.physicalSize = const Size(320, 640);
+    tester.view.devicePixelRatio = 1;
+    tester.platformDispatcher.textScaleFactorTestValue = 1.6;
+    addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+
+    // An overflow fails the test on any of these screens
+    await pumpApp(tester, hasSession: true, summaries: [rackInAlarm], alarms: [alarm]);
+    expect(find.textContaining('B-02', findRichText: true), findsOneWidget);
+
+    await tester.tap(find.textContaining('B-02', findRichText: true));
+    await tester.pumpAndSettle();
+    expect(find.text('Silenciar alarma'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(NavigationDestination, 'Alertas'));
+    await tester.pumpAndSettle();
+    expect(find.text('Inclinación crítica'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(NavigationDestination, 'Escanear'));
+    await tester.pumpAndSettle();
+    expect(find.text('Este dispositivo no tiene NFC'), findsOneWidget);
+  });
+
+  testWidgets('the login fits a small screen with large text', (tester) async {
+    tester.view.physicalSize = const Size(320, 640);
+    tester.view.devicePixelRatio = 1;
+    tester.platformDispatcher.textScaleFactorTestValue = 1.6;
+    addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+
+    await pumpApp(tester, hasSession: false);
+
+    expect(find.widgetWithText(FilledButton, 'Iniciar sesión'), findsOneWidget);
   });
 }
