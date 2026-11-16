@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rack_monitoring/data/models/rack.dart';
 import 'package:rack_monitoring/data/models/rack_status.dart';
 import 'package:rack_monitoring/data/models/rack_summary.dart';
+import 'package:rack_monitoring/data/models/thresholds.dart';
 import 'package:rack_monitoring/data/services/device_api.dart';
 import 'package:rack_monitoring/data/services/entity_data.dart';
 import 'package:rack_monitoring/data/services/rack_api.dart';
@@ -40,6 +41,21 @@ class RackRepository {
       if (!hasNewLinks) return;
     }
   }
+
+  Future<Thresholds> getThresholds(String nodeId) async =>
+      Thresholds.fromAttributes(await _deviceApi.getAttributes(nodeId, Thresholds.attributeKeys));
+
+  // Turns the buzzer off until the rack is back to normal
+  Future<void> silenceAlarm(String nodeId) async {
+    final reply = await _deviceApi.sendCommand(nodeId, 'silenceAlarm');
+    if (reply is Map && reply['ok'] == false) throw NodeCommandRejected('${reply['error'] ?? 'rejected'}');
+  }
+}
+
+class NodeCommandRejected implements Exception {
+  const NodeCommandRejected(this.reason);
+
+  final String reason;
 }
 
 EntityData mergeNodeValues(EntityData? previous, EntityData change) => EntityData(
