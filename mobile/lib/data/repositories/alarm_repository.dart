@@ -9,6 +9,11 @@ class AlarmRepository {
 
   final AlarmApi _alarmApi;
 
+  Future<List<Alarm>> getAlarms({required int limit}) async {
+    final alarms = await _alarmApi.getAlarms(pageSize: limit);
+    return alarms.map(Alarm.fromJson).toList();
+  }
+
   Future<List<Alarm>> getNodeAlarms(String nodeId, {required int limit}) async {
     final alarms = await _alarmApi.getAlarms(deviceId: nodeId, pageSize: limit);
     return alarms.map(Alarm.fromJson).toList();
@@ -18,5 +23,7 @@ class AlarmRepository {
   Future<void> acknowledge(Iterable<Alarm> alarms) =>
       Future.wait([for (final alarm in alarms) _alarmApi.acknowledgeAlarm(alarm.id)]);
 
-  Stream<int> watchActiveCount() => _alarmApi.watchActiveCount();
+  Stream<int> watchActiveCount() => _alarmApi.watchCount('ACTIVE');
+
+  Stream<int> watchUnacknowledgedCount() => _alarmApi.watchCount('UNACK');
 }

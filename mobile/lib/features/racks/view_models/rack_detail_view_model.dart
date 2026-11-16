@@ -10,7 +10,7 @@ import 'package:rack_monitoring/data/models/thresholds.dart';
 import 'package:rack_monitoring/data/repositories/alarm_repository.dart';
 import 'package:rack_monitoring/data/repositories/rack_repository.dart';
 import 'package:rack_monitoring/data/repositories/telemetry_repository.dart';
-import 'package:rack_monitoring/features/alarms/view_models/active_alarm_count_provider.dart';
+import 'package:rack_monitoring/features/alarms/view_models/alarm_count_providers.dart';
 import 'package:rack_monitoring/features/racks/view_models/racks_view_model.dart';
 
 // Null when the rack doesn't exist; it follows the live list
@@ -35,7 +35,7 @@ final tiltHistoryProvider = FutureProvider.autoDispose.family<List<TiltPoint>, T
 });
 
 final rackAlarmsProvider = FutureProvider.autoDispose.family<List<Alarm>, String>((ref, nodeId) {
-  ref.watch(activeAlarmCountProvider);
+  ref.watch(alarmChangesProvider);
   return ref.watch(alarmRepositoryProvider).getNodeAlarms(nodeId, limit: 50);
 });
 
