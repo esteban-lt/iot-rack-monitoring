@@ -91,10 +91,12 @@ class _RacksScreenState extends ConsumerState<RacksScreen> {
             ],
           ),
         ),
-        Padding(
+        Container(
+          width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            spacing: 8,
             children: [
               Text('${visible.length} de ${summaries.length} racks', style: theme.textTheme.bodySmall),
               if (updatedAt != null) RelativeTime(updatedAt, prefix: 'Actualizado ', style: theme.textTheme.bodySmall),

@@ -40,9 +40,8 @@ class AlarmTile extends StatelessWidget {
       ),
       child: ListTile(
         onTap: onTap,
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.baseline,
-          textBaseline: TextBaseline.alphabetic,
+        title: Wrap(
+          crossAxisAlignment: WrapCrossAlignment.end,
           spacing: 8,
           children: [
             Text(rackName, style: theme.textTheme.titleMedium),

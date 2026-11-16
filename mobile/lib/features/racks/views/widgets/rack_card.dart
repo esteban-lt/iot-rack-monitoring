@@ -34,29 +34,44 @@ class RackCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             spacing: 8,
             children: [
               Row(
                 spacing: 8,
                 children: [
-                  Text(rack.name, style: theme.textTheme.titleMedium),
                   Expanded(
-                    child: Text(rack.location, style: muted, overflow: TextOverflow.ellipsis),
+                    child: Text.rich(
+                      TextSpan(
+                        text: rack.name,
+                        style: theme.textTheme.titleMedium,
+                        children: [TextSpan(text: '  ${rack.location}', style: muted)],
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   StatusBadge(status),
                 ],
               ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
+              // The time moves to its own line when the text is large
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.end,
                 spacing: 8,
                 children: [
-                  Text(
-                    latest == null ? '—' : '${latest.tilt.toStringAsFixed(1)}°',
-                    style: theme.textTheme.headlineMedium?.copyWith(color: isAlarm ? alarmColors.onContainer : null),
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.end,
+                    spacing: 8,
+                    children: [
+                      Text(
+                        latest == null ? '—' : '${latest.tilt.toStringAsFixed(1)}°',
+                        style: theme.textTheme.headlineMedium?.copyWith(
+                          color: isAlarm ? alarmColors.onContainer : null,
+                        ),
+                      ),
+                      Text(latest == null ? 'sin lectura' : 'inclinación', style: muted),
+                    ],
                   ),
-                  Expanded(child: Text(latest == null ? 'sin lectura' : 'inclinación', style: muted)),
                   if (latest != null)
                     RelativeTime(latest.ts, style: muted)
                   else
