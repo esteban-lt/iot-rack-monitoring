@@ -4,10 +4,18 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rack_monitoring/app.dart';
 import 'package:rack_monitoring/core/theme/theme_mode_provider.dart';
+import 'package:rack_monitoring/data/models/alarm.dart';
 import 'package:rack_monitoring/data/models/session_tokens.dart';
+import 'package:rack_monitoring/data/repositories/alarm_repository.dart';
 import 'package:rack_monitoring/data/services/session_storage.dart';
+import 'package:rack_monitoring/features/alarms/view_models/alarm_count_providers.dart';
 import 'package:rack_monitoring/features/racks/view_models/racks_view_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+class FakeAlarmRepository extends Fake implements AlarmRepository {
+  @override
+  Future<List<Alarm>> getAlarms({required int limit}) async => [];
+}
 
 Future<void> pumpApp(WidgetTester tester, {required bool hasSession}) async {
   FlutterSecureStorage.setMockInitialValues({});
@@ -22,6 +30,9 @@ Future<void> pumpApp(WidgetTester tester, {required bool hasSession}) async {
         sessionStorageProvider.overrideWithValue(session),
         sharedPreferencesProvider.overrideWithValue(await SharedPreferences.getInstance()),
         rackSummariesProvider.overrideWithValue(const AsyncData([])),
+        activeAlarmCountProvider.overrideWithValue(const AsyncData(0)),
+        unacknowledgedAlarmCountProvider.overrideWithValue(const AsyncData(3)),
+        alarmRepositoryProvider.overrideWithValue(FakeAlarmRepository()),
       ],
       child: const App(),
     ),
@@ -56,5 +67,12 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.widgetWithText(AppBar, 'Alertas'), findsOneWidget);
+    expect(find.text('No hay alertas'), findsOneWidget);
+  });
+
+  testWidgets('shows the unacknowledged alarms on the alarms tab', (tester) async {
+    await pumpApp(tester, hasSession: true);
+
+    expect(find.widgetWithText(Badge, '3'), findsOneWidget);
   });
 }

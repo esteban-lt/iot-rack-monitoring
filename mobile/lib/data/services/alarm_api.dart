@@ -24,12 +24,13 @@ class AlarmApi {
 
   Future<void> acknowledgeAlarm(String alarmId) => _client.post<void>('/api/alarm/$alarmId/ack');
 
-  Stream<int> watchActiveCount() {
+  // Counts the alarms of every node with that status: ACTIVE, CLEARED, ACK or UNACK
+  Stream<int> watchCount(String status) {
     final messages = _socket.subscribe({
       'type': 'ALARM_COUNT',
       'query': {
         'entityFilter': {'type': 'entityType', 'entityType': 'DEVICE'},
-        'statusList': ['ACTIVE'],
+        'statusList': [status],
         'severityList': <String>[],
         'typeList': <String>[],
         'searchPropagatedAlarms': false,
