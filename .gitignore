@@ -28,3 +28,44 @@ docs
 *.njsproj
 *.sln
 *.sw?
+
+# Mobile (Flutter)
+*.iml
+mobile/.dart_tool/
+mobile/.flutter-plugins-dependencies
+mobile/build/
+mobile/coverage/
+mobile/.widget_preview/
+# Web is only used to run the app in Chrome during development
+mobile/web/
+
+# Mobile: Android
+mobile/android/.gradle/
+mobile/android/captures/
+mobile/android/gradlew
+mobile/android/gradlew.bat
+mobile/android/gradle/wrapper/gradle-wrapper.jar
+mobile/android/local.properties
+mobile/android/**/GeneratedPluginRegistrant.java
+mobile/android/**/.cxx/
+mobile/android/key.properties
+mobile/android/app/debug
+mobile/android/app/profile
+mobile/android/app/release
+*.keystore
+*.jks
+
+# Mobile: iOS
+mobile/ios/**/Pods/
+mobile/ios/**/.symlinks/
+mobile/ios/**/DerivedData/
+mobile/ios/**/xcuserdata
+mobile/ios/**/.generated/
+mobile/ios/Flutter/App.framework
+mobile/ios/Flutter/Flutter.framework
+mobile/ios/Flutter/Flutter.podspec
+mobile/ios/Flutter/Generated.xcconfig
+mobile/ios/Flutter/ephemeral/
+mobile/ios/Flutter/flutter_export_environment.sh
+mobile/ios/Flutter/.last_build_id
+mobile/ios/Runner/GeneratedPluginRegistrant.*

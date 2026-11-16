@@ -24,6 +24,13 @@ flutter create --platforms=web .
 flutter run -d chrome
 ```
 
+That command also restores some template files. Discard them:
+
+```bash
+git restore .metadata
+rm .gitignore test/widget_test.dart
+```
+
 The ThingsBoard URL defaults to `https://thingsboard.cloud`. To change it:
 
 ```bash
