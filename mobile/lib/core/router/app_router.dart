@@ -4,6 +4,7 @@ import 'package:rack_monitoring/core/router/app_shell.dart';
 import 'package:rack_monitoring/data/services/session_storage.dart';
 import 'package:rack_monitoring/features/alarms/views/alarms_screen.dart';
 import 'package:rack_monitoring/features/auth/views/login_screen.dart';
+import 'package:rack_monitoring/features/devices/views/devices_screen.dart';
 import 'package:rack_monitoring/features/racks/views/rack_detail_screen.dart';
 import 'package:rack_monitoring/features/racks/views/racks_screen.dart';
 import 'package:rack_monitoring/features/scan/views/scan_screen.dart';
@@ -13,6 +14,7 @@ abstract final class AppRoutes {
   static const racks = '/racks';
   static const scan = '/scan';
   static const alarms = '/alarms';
+  static const devices = '/devices';
 
   static String rackDetail(String rackId) => '$racks/$rackId';
 }
@@ -47,6 +49,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 ],
               ),
             ],
+          ),
+          StatefulShellBranch(
+            routes: [GoRoute(path: AppRoutes.devices, builder: (context, state) => const DevicesScreen())],
           ),
           StatefulShellBranch(
             routes: [GoRoute(path: AppRoutes.scan, builder: (context, state) => const ScanScreen())],

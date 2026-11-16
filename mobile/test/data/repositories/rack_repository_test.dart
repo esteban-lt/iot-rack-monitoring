@@ -85,6 +85,49 @@ void main() {
     });
   });
 
+  group('buildNodeSummaries', () {
+    test('reads the node details and its rack', () {
+      final details = node('node-1', telemetry: {'status': 'ok', 'rssi': '-61'});
+      details.latest['ATTRIBUTE']!.addAll(
+        valuesAt(readAt, {'mac': '24:6F:28:AA:BB:CC', 'ip': '192.168.1.20', 'firmware_version': '1.2.0'}),
+      );
+
+      final [summary] = buildNodeSummaries([rack('rack-1')], [details]);
+
+      expect(summary.name, 'Nodo node-1');
+      expect(summary.isOnline, isTrue);
+      expect((summary.mac, summary.ip, summary.firmwareVersion), ('24:6F:28:AA:BB:CC', '192.168.1.20', '1.2.0'));
+      expect(summary.signalDbm, -61);
+      expect(summary.lastSeen, readAt);
+      expect((summary.rackId, summary.rackName), ('rack-1', 'A-01'));
+    });
+
+    test('leaves unassigned the node that lost its rack to a newer reading', () {
+      final nodes = [node('old'), node('new', tagReadAt: readAt.add(const Duration(minutes: 5)))];
+
+      final summaries = {
+        for (final summary in buildNodeSummaries([rack('rack-1')], nodes)) summary.id: summary,
+      };
+
+      expect(summaries['new']?.rackId, 'rack-1');
+      expect(summaries['old']?.rackId, isNull);
+    });
+
+    test('hides the signal of an offline node and falls back to its last activity', () {
+      final lastActivity = DateTime(2026, 11, 14, 22);
+      final silentNode = node('node-1', active: 'false', telemetry: {'rssi': '-70'});
+      silentNode.latest['ATTRIBUTE']!.addAll(
+        valuesAt(readAt, {'lastActivityTime': '${lastActivity.millisecondsSinceEpoch}'}),
+      );
+
+      final [summary] = buildNodeSummaries([], [silentNode]);
+
+      expect(summary.isOnline, isFalse);
+      expect(summary.signalDbm, isNull);
+      expect(summary.lastSeen, lastActivity);
+    });
+  });
+
   group('watchRackSummaries', () {
     late MockRackApi rackApi;
     late MockDeviceApi deviceApi;

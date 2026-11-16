@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rack_monitoring/data/models/node_summary.dart';
 import 'package:rack_monitoring/data/models/rack.dart';
 import 'package:rack_monitoring/data/models/rack_status.dart';
 import 'package:rack_monitoring/data/models/rack_summary.dart';
@@ -18,11 +19,16 @@ class RackRepository {
   final DeviceApi _deviceApi;
 
   // Emits every rack with its node values, and again on each live change
-  Stream<List<RackSummary>> watchRackSummaries() async* {
+  Stream<List<RackSummary>> watchRackSummaries() => _watchRacksAndNodes(buildRackSummaries);
+
+  // Emits every node with its assigned rack, and again on each live change
+  Stream<List<NodeSummary>> watchNodeSummaries() => _watchRacksAndNodes(buildNodeSummaries);
+
+  Stream<T> _watchRacksAndNodes<T>(T Function(List<EntityData> racks, Iterable<EntityData> nodes) build) async* {
     while (true) {
       final (racks, nodes) = await (_rackApi.getRacks(), _deviceApi.getNodes()).wait;
       final nodeById = {for (final node in nodes) node.id: node};
-      yield buildRackSummaries(racks, nodes);
+      yield build(racks, nodes);
 
       var hasNewLinks = false;
       await for (final changes in _deviceApi.watchNodes()) {
@@ -35,7 +41,7 @@ class RackRepository {
 
         // A node moved to another rack: load everything again
         if (hasNewLinks) break;
-        yield buildRackSummaries(racks, nodeById.values);
+        yield build(racks, nodeById.values);
       }
 
       if (!hasNewLinks) return;
@@ -71,7 +77,7 @@ bool rackTagChanged(EntityData previous, EntityData next) => _rackTagOf(previous
 String? _rackTagOf(EntityData node) => node.valueOf('ATTRIBUTE', 'rack_uid')?.toUpperCase();
 
 // A rack belongs to the node that read its RFID tag last
-List<RackSummary> buildRackSummaries(Iterable<EntityData> racks, Iterable<EntityData> nodes) {
+Map<String, EntityData> _nodeByTag(Iterable<EntityData> nodes) {
   final readings = nodes.where((node) => _rackTagOf(node) != null).toList()
     ..sort((a, b) => _rackTagReadAt(b).compareTo(_rackTagReadAt(a)));
 
@@ -79,11 +85,50 @@ List<RackSummary> buildRackSummaries(Iterable<EntityData> racks, Iterable<Entity
   for (final node in readings) {
     nodeByTag.putIfAbsent(_rackTagOf(node)!, () => node);
   }
+  return nodeByTag;
+}
 
-  return [
+String? _tagOfRack(EntityData rack) => rack.valueOf('SERVER_ATTRIBUTE', 'rfid_uid')?.toUpperCase();
+
+String _nameOfRack(EntityData rack) =>
+    rack.valueOf('SERVER_ATTRIBUTE', 'rack_name') ?? rack.valueOf('ENTITY_FIELD', 'name') ?? '';
+
+List<RackSummary> buildRackSummaries(Iterable<EntityData> racks, Iterable<EntityData> nodes) {
+  final nodeByTag = _nodeByTag(nodes);
+  return [for (final rack in racks) _toRackSummary(rack, nodeByTag[_tagOfRack(rack)])];
+}
+
+List<NodeSummary> buildNodeSummaries(Iterable<EntityData> racks, Iterable<EntityData> nodes) {
+  final nodeByTag = _nodeByTag(nodes);
+  final rackByNodeId = {
     for (final rack in racks)
-      _toRackSummary(rack, nodeByTag[rack.valueOf('SERVER_ATTRIBUTE', 'rfid_uid')?.toUpperCase()]),
-  ];
+      if (nodeByTag[_tagOfRack(rack)] case final node?) node.id: rack,
+  };
+
+  return [for (final node in nodes) _toNodeSummary(node, rackByNodeId[node.id])];
+}
+
+NodeSummary _toNodeSummary(EntityData node, EntityData? rack) {
+  final isOnline = node.valueOf('ATTRIBUTE', 'active') == 'true';
+  final lastActivity = int.tryParse(node.valueOf('ATTRIBUTE', 'lastActivityTime') ?? '');
+  final signal = node.valueOf('TIME_SERIES', 'rssi');
+
+  return NodeSummary(
+    id: node.id,
+    name: node.valueOf('ENTITY_FIELD', 'name') ?? '',
+    isOnline: isOnline,
+    mac: node.valueOf('ATTRIBUTE', 'mac'),
+    ip: node.valueOf('ATTRIBUTE', 'ip'),
+    firmwareVersion: node.valueOf('ATTRIBUTE', 'firmware_version'),
+    signalDbm: isOnline && signal != null ? double.parse(signal).round() : null,
+    lastSeen: switch ((node.latest['TIME_SERIES']?['status'], lastActivity)) {
+      (final status?, _) when node.valueOf('TIME_SERIES', 'status') != null => status.ts,
+      (_, final ms?) => DateTime.fromMillisecondsSinceEpoch(ms),
+      _ => null,
+    },
+    rackId: rack?.id,
+    rackName: rack == null ? null : _nameOfRack(rack),
+  );
 }
 
 DateTime _rackTagReadAt(EntityData node) => node.latest['ATTRIBUTE']!['rack_uid']!.ts;
@@ -99,7 +144,7 @@ RackSummary _toRackSummary(EntityData rack, EntityData? node) {
   return RackSummary(
     rack: Rack(
       id: rack.id,
-      name: rack.valueOf('SERVER_ATTRIBUTE', 'rack_name') ?? rack.valueOf('ENTITY_FIELD', 'name') ?? '',
+      name: _nameOfRack(rack),
       location: rack.valueOf('SERVER_ATTRIBUTE', 'location') ?? '',
       rfidUid: rack.valueOf('SERVER_ATTRIBUTE', 'rfid_uid'),
       nodeId: node?.id,

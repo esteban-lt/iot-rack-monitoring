@@ -9,9 +9,10 @@ Flutter app to check rack status, handle alarms and identify a rack by its NFC t
 - Rack detail with tilt, vibration, last impact, a tilt chart and the recent alarms. From there the buzzer can be silenced and the alarms acknowledged.
 - Alarm list grouped by day, with swipe to acknowledge and a live badge.
 - NFC scan: reading the tag stuck on a rack opens its detail.
+- Device list with the connection, assigned rack, MAC, IP, firmware and WiFi signal of each node.
 - Light, dark and system themes, an offline banner and a "Escanear tag" shortcut on the app icon.
 
-Racks, thresholds, nodes and calibration are managed from the web app.
+Racks, thresholds and calibration are managed from the web app.
 
 ## Platforms
 

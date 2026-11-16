@@ -8,8 +8,8 @@ final deviceApiProvider = Provider<DeviceApi>(
   (ref) => DeviceApi(ref.watch(thingsboardClientProvider), ref.watch(thingsboardSocketProvider)),
 );
 
-const _telemetryKeys = ['status', 'tilt', 'vib_rms', 'impact_g'];
-const _attributeKeys = ['active', 'rack_uid'];
+const _telemetryKeys = ['status', 'tilt', 'vib_rms', 'impact_g', 'rssi'];
+const _attributeKeys = ['active', 'rack_uid', 'lastActivityTime', 'mac', 'ip', 'firmware_version'];
 
 final _nodeLatestKeys = [
   for (final key in _telemetryKeys) {'type': 'TIME_SERIES', 'key': key},

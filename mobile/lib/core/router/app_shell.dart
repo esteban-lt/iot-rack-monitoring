@@ -56,6 +56,11 @@ class AppShell extends ConsumerWidget {
           navigationShell.goBranch(index, initialLocation: index == navigationShell.currentIndex),
       destinations: [
         const NavigationDestination(icon: Icon(Icons.dns_outlined), selectedIcon: Icon(Icons.dns), label: 'Racks'),
+        const NavigationDestination(
+          icon: Icon(Icons.memory_outlined),
+          selectedIcon: Icon(Icons.memory),
+          label: 'Dispositivos',
+        ),
         const NavigationDestination(icon: Icon(Icons.nfc), label: 'Escanear'),
         NavigationDestination(
           icon: withBadge(Icons.notifications_outlined),
