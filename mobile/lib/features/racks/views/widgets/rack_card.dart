@@ -7,9 +7,10 @@ import 'package:rack_monitoring/shared/widgets/relative_time.dart';
 import 'package:rack_monitoring/shared/widgets/status_badge.dart';
 
 class RackCard extends StatelessWidget {
-  const RackCard(this.summary, {super.key});
+  const RackCard(this.summary, {super.key, required this.onTap});
 
   final RackSummary summary;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -27,46 +28,50 @@ class RackCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             )
           : null,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 8,
-          children: [
-            Row(
-              spacing: 8,
-              children: [
-                Text(rack.name, style: theme.textTheme.titleMedium),
-                Expanded(
-                  child: Text(rack.location, style: muted, overflow: TextOverflow.ellipsis),
-                ),
-                StatusBadge(status),
-              ],
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              spacing: 8,
-              children: [
-                Text(
-                  latest == null ? '—' : '${latest.tilt.toStringAsFixed(1)}°',
-                  style: theme.textTheme.headlineMedium?.copyWith(color: isAlarm ? alarmColors.onContainer : null),
-                ),
-                Expanded(child: Text(latest == null ? 'sin lectura' : 'inclinación', style: muted)),
-                if (latest != null)
-                  RelativeTime(latest.ts, style: muted)
-                else
-                  Text(
-                    rack.nodeId == null
-                        ? 'Sin nodo asignado'
-                        : lastSeen == null
-                        ? 'Sin datos del nodo'
-                        : 'último dato ${formatDateTime(lastSeen)}',
-                    style: muted,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 8,
+            children: [
+              Row(
+                spacing: 8,
+                children: [
+                  Text(rack.name, style: theme.textTheme.titleMedium),
+                  Expanded(
+                    child: Text(rack.location, style: muted, overflow: TextOverflow.ellipsis),
                   ),
-              ],
-            ),
-          ],
+                  StatusBadge(status),
+                ],
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                spacing: 8,
+                children: [
+                  Text(
+                    latest == null ? '—' : '${latest.tilt.toStringAsFixed(1)}°',
+                    style: theme.textTheme.headlineMedium?.copyWith(color: isAlarm ? alarmColors.onContainer : null),
+                  ),
+                  Expanded(child: Text(latest == null ? 'sin lectura' : 'inclinación', style: muted)),
+                  if (latest != null)
+                    RelativeTime(latest.ts, style: muted)
+                  else
+                    Text(
+                      rack.nodeId == null
+                          ? 'Sin nodo asignado'
+                          : lastSeen == null
+                          ? 'Sin datos del nodo'
+                          : 'último dato ${formatDateTime(lastSeen)}',
+                      style: muted,
+                    ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

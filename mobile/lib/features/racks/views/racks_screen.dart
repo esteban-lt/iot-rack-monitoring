@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rack_monitoring/core/router/app_router.dart';
 import 'package:rack_monitoring/data/models/rack_status.dart';
 import 'package:rack_monitoring/data/models/rack_summary.dart';
 import 'package:rack_monitoring/features/auth/views/widgets/user_menu_button.dart';
@@ -122,7 +124,8 @@ class _RacksScreenState extends ConsumerState<RacksScreen> {
                     physics: const AlwaysScrollableScrollPhysics(),
                     itemCount: visible.length,
                     separatorBuilder: (context, index) => const SizedBox(height: 8),
-                    itemBuilder: (context, index) => RackCard(visible[index]),
+                    itemBuilder: (context, index) =>
+                        RackCard(visible[index], onTap: () => context.go(AppRoutes.rackDetail(visible[index].rack.id))),
                   ),
           ),
         ),
