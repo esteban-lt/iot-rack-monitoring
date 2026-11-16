@@ -1,10 +1,13 @@
 import 'package:intl/intl.dart';
 
 final _dateTimeFormat = DateFormat('dd/MM/yy HH:mm');
+final _dateFormat = DateFormat('dd/MM/yy');
 final _timeFormat = DateFormat('HH:mm');
 final _dayFormat = DateFormat('dd/MM');
 
 String formatDateTime(DateTime date) => _dateTimeFormat.format(date);
+
+String formatDate(DateTime date) => _dateFormat.format(date);
 
 String formatTime(DateTime date) => _timeFormat.format(date);
 
