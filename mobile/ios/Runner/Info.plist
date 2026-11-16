@@ -66,5 +66,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NFCReaderUsageDescription</key>
+	<string>La app lee el tag NFC de un rack para abrir su detalle.</string>
 </dict>
 </plist>
