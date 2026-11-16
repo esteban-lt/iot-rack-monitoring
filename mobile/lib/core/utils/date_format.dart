@@ -1,8 +1,14 @@
 import 'package:intl/intl.dart';
 
 final _dateTimeFormat = DateFormat('dd/MM/yy HH:mm');
+final _timeFormat = DateFormat('HH:mm');
+final _dayFormat = DateFormat('dd/MM');
 
 String formatDateTime(DateTime date) => _dateTimeFormat.format(date);
+
+String formatTime(DateTime date) => _timeFormat.format(date);
+
+String formatDay(DateTime date) => _dayFormat.format(date);
 
 // "hace 5 s", "hace 3 min", "hace 2 h", "hace 4 d"
 String formatRelativeTime(DateTime date, DateTime now) {
