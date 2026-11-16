@@ -150,4 +150,25 @@ void main() {
       verify(rackApi.getRacks).called(2);
     });
   });
+
+  group('silenceAlarm', () {
+    late MockDeviceApi deviceApi;
+
+    setUp(() => deviceApi = MockDeviceApi());
+
+    test('completes when the node accepts the command', () async {
+      when(() => deviceApi.sendCommand('node-1', 'silenceAlarm')).thenAnswer((_) async => {'ok': true});
+
+      await expectLater(RackRepository(MockRackApi(), deviceApi).silenceAlarm('node-1'), completes);
+    });
+
+    test('fails when the node rejects the command', () async {
+      when(() => deviceApi.sendCommand(any(), any())).thenAnswer((_) async => {'ok': false, 'error': 'busy'});
+
+      await expectLater(
+        RackRepository(MockRackApi(), deviceApi).silenceAlarm('node-1'),
+        throwsA(isA<NodeCommandRejected>().having((error) => error.reason, 'reason', 'busy')),
+      );
+    });
+  });
 }

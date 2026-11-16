@@ -47,6 +47,50 @@ class DeviceApi {
 
     return messages.map((message) => _toEntities(message['update'] ?? (message['data'] as Map?)?['data']));
   }
+
+  Future<Map<String, dynamic>> getAttributes(String deviceId, List<String> keys) async {
+    final response = await _client.get<List<dynamic>>(
+      '/api/plugins/telemetry/DEVICE/$deviceId/values/attributes',
+      queryParameters: {'keys': keys.join(',')},
+    );
+    return {for (final attribute in response.data!) attribute['key'] as String: attribute['value']};
+  }
+
+  // Averages of each interval, oldest first
+  Future<List<LatestValue>> getTelemetryHistory(
+    String deviceId,
+    String key, {
+    required DateTime start,
+    required DateTime end,
+    required Duration interval,
+  }) async {
+    final response = await _client.get<Map<String, dynamic>>(
+      '/api/plugins/telemetry/DEVICE/$deviceId/values/timeseries',
+      queryParameters: {
+        'keys': key,
+        'startTs': start.millisecondsSinceEpoch,
+        'endTs': end.millisecondsSinceEpoch,
+        'interval': interval.inMilliseconds,
+        'agg': 'AVG',
+        'limit': 10000,
+      },
+    );
+
+    return [
+      for (final point in response.data![key] as List? ?? [])
+        (ts: DateTime.fromMillisecondsSinceEpoch(point['ts'] as int), value: '${point['value']}'),
+    ]..sort((a, b) => a.ts.compareTo(b.ts));
+  }
+
+  Future<Object?> sendCommand(String deviceId, String method) async {
+    const nodeTimeout = Duration(seconds: 8);
+    final response = await _client.post<Object?>(
+      '/api/rpc/twoway/$deviceId',
+      data: {'method': method, 'params': <String, dynamic>{}, 'timeout': nodeTimeout.inMilliseconds},
+      options: Options(receiveTimeout: nodeTimeout + const Duration(seconds: 5)),
+    );
+    return response.data;
+  }
 }
 
 List<EntityData> _toEntities(Object? entities) => [

@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:rack_monitoring/core/theme/status_colors.dart';
 import 'package:rack_monitoring/data/models/rack_status.dart';
 
+// Colored by status; the label can be replaced to reuse the tone for other values
 class StatusBadge extends StatelessWidget {
-  const StatusBadge(this.status, {super.key});
+  const StatusBadge(this.status, {super.key, this.label});
 
   final RackStatus status;
+  final String? label;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class StatusBadge extends StatelessWidget {
           spacing: 6,
           children: [
             Icon(Icons.circle, size: 8, color: colors.color),
-            Text(status.label, style: theme.textTheme.labelMedium?.copyWith(color: colors.onContainer)),
+            Text(label ?? status.label, style: theme.textTheme.labelMedium?.copyWith(color: colors.onContainer)),
           ],
         ),
       ),
