@@ -46,4 +46,15 @@ void main() {
   test('says nothing for a rack without node', () {
     expect(statusMessage(summary(RackStatus.offline, nodeId: null), thresholds), isNull);
   });
+
+  test('marks a gap where readings are far apart', () {
+    const interval = Duration(minutes: 2);
+    final points = [
+      for (final minutes in [0, 2, 4, 30, 32]) (ts: seenAt.add(Duration(minutes: minutes)), tilt: 1.0),
+    ];
+
+    final withGaps = splitAtGaps(points, interval);
+
+    expect(withGaps.map((point) => point == null), [false, false, false, true, false, false]);
+  });
 }

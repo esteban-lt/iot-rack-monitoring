@@ -68,6 +68,14 @@ class RackActionsViewModel extends AsyncNotifier<void> {
   }
 }
 
+// Null marks a gap, so the chart doesn't join readings that are far apart
+List<TiltPoint?> splitAtGaps(List<TiltPoint> points, Duration interval) => [
+  for (final (index, point) in points.indexed) ...[
+    if (index > 0 && point.ts.difference(points[index - 1].ts) > interval * 3) null,
+    point,
+  ],
+];
+
 // Explains a status that needs attention; null when there is nothing to explain
 String? statusMessage(RackSummary summary, Thresholds? thresholds) {
   final RackSummary(:rack, :status, :latest, :lastSeen) = summary;

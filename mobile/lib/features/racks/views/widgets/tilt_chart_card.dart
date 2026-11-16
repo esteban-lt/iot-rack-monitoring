@@ -81,6 +81,15 @@ class _TiltChart extends StatelessWidget {
     final end = DateTime.now();
     final highest = [...points.map((point) => point.tilt), thresholds?.tiltAlarmDeg ?? 0].reduce(max);
 
+    final spots = [
+      for (final point in splitAtGaps(points, range.interval))
+        point == null ? FlSpot.nullSpot : FlSpot(point.ts.millisecondsSinceEpoch.toDouble(), point.tilt),
+    ];
+
+    // A reading between two gaps has no line, so it needs a dot to be seen
+    bool isGap(int index) => index < 0 || index >= spots.length || spots[index].isNull();
+    bool isAlone(int index) => isGap(index - 1) && isGap(index + 1);
+
     HorizontalLine thresholdLine(double value, String label, RackStatus status) => HorizontalLine(
       y: value,
       color: statusColors.of(status).color,
@@ -104,10 +113,10 @@ class _TiltChart extends StatelessWidget {
         gridData: const FlGridData(drawVerticalLine: false),
         lineBarsData: [
           LineChartBarData(
-            spots: [for (final point in points) FlSpot(point.ts.millisecondsSinceEpoch.toDouble(), point.tilt)],
+            spots: spots,
             color: theme.colorScheme.primary,
             barWidth: 2,
-            dotData: const FlDotData(show: false),
+            dotData: FlDotData(checkToShowDot: (spot, bar) => isAlone(bar.spots.indexOf(spot))),
           ),
         ],
         extraLinesData: ExtraLinesData(
