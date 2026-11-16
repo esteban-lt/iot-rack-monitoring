@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rack_monitoring/core/network/auth_interceptor.dart';
+import 'package:rack_monitoring/core/network/session_refresher.dart';
 import 'package:rack_monitoring/data/models/session_tokens.dart';
 import 'package:rack_monitoring/data/services/session_storage.dart';
 
@@ -56,7 +57,9 @@ void main() {
     final refreshClient = Dio(options)..httpClientAdapter = refreshAdapter;
 
     client = Dio(options)..httpClientAdapter = FakeAdapter(answerApi);
-    client.interceptors.add(AuthInterceptor(session: session, client: client, refreshClient: refreshClient));
+    client.interceptors.add(
+      AuthInterceptor(session: session, refresher: SessionRefresher(session, refreshClient), client: client),
+    );
   }
 
   ResponseBody renewTokens(RequestOptions options) => jsonResponse(200, {'token': 'new', 'refreshToken': 'refresh'});

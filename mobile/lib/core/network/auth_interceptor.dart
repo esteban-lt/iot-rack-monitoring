@@ -1,17 +1,16 @@
 import 'package:dio/dio.dart';
-import 'package:rack_monitoring/data/models/session_tokens.dart';
+import 'package:rack_monitoring/core/network/session_refresher.dart';
 import 'package:rack_monitoring/data/services/session_storage.dart';
 
 // Adds the session token and renews it once when ThingsBoard answers 401
 class AuthInterceptor extends Interceptor {
-  AuthInterceptor({required this.session, required this.client, required this.refreshClient});
+  AuthInterceptor({required this.session, required this.refresher, required this.client});
 
   static const _retryFlag = 'isRetry';
 
   final SessionStorage session;
+  final SessionRefresher refresher;
   final Dio client;
-  final Dio refreshClient;
-  Future<void>? _refreshRequest;
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
@@ -31,11 +30,8 @@ class AuthInterceptor extends Interceptor {
     }
 
     try {
-      // Requests that fail together share one refresh
-      await (_refreshRequest ??= _refreshSession().whenComplete(() => _refreshRequest = null));
-    } on DioException catch (refreshError) {
-      // The session only ends when ThingsBoard rejects the refresh token, not when offline
-      if (refreshError.response != null) await session.clear();
+      await refresher.refresh();
+    } on DioException {
       return handler.next(err);
     }
 
@@ -45,13 +41,5 @@ class AuthInterceptor extends Interceptor {
     } on DioException catch (retryError) {
       handler.next(retryError);
     }
-  }
-
-  Future<void> _refreshSession() async {
-    final response = await refreshClient.post<Map<String, dynamic>>(
-      '/api/auth/token',
-      data: {'refreshToken': session.tokens?.refreshToken},
-    );
-    await session.update(SessionTokens.fromJson(response.data!));
   }
 }

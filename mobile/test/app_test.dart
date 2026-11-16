@@ -6,6 +6,7 @@ import 'package:rack_monitoring/app.dart';
 import 'package:rack_monitoring/core/theme/theme_mode_provider.dart';
 import 'package:rack_monitoring/data/models/session_tokens.dart';
 import 'package:rack_monitoring/data/services/session_storage.dart';
+import 'package:rack_monitoring/features/racks/view_models/racks_view_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> pumpApp(WidgetTester tester, {required bool hasSession}) async {
@@ -20,6 +21,7 @@ Future<void> pumpApp(WidgetTester tester, {required bool hasSession}) async {
       overrides: [
         sessionStorageProvider.overrideWithValue(session),
         sharedPreferencesProvider.overrideWithValue(await SharedPreferences.getInstance()),
+        rackSummariesProvider.overrideWithValue(const AsyncData([])),
       ],
       child: const App(),
     ),
