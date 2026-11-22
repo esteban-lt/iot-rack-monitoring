@@ -89,7 +89,9 @@ class ScanViewModel extends Notifier<ScanState> {
 
   Future<void> _onTag(String uid) async {
     _stopReading();
-    final summaries = await AsyncValue.guard(() => ref.read(rackSummariesProvider.future));
+    final rackList = ref.listen(rackSummariesProvider.future, (_, _) {});
+    final summaries = await AsyncValue.guard(rackList.read);
+    rackList.close();
     if (!ref.mounted) return;
 
     // Without the rack list the tag can't be looked up; the user can read it again

@@ -100,6 +100,26 @@ void main() {
     expect(state(), isA<ScanWaiting>());
   });
 
+  test('finds the rack when the rack list was reloaded while its tab was hidden', () async {
+    nfc = FakeNfcService();
+    container = ProviderContainer.test(
+      overrides: [
+        nfcServiceProvider.overrideWithValue(nfc),
+        rackSummariesProvider.overrideWith((ref) => Stream.value(summaries)),
+      ],
+    );
+    final rackList = container.listen(rackSummariesProvider, (_, _) {});
+    await container.read(rackSummariesProvider.future);
+    rackList.pause();
+    container.invalidate(rackSummariesProvider);
+
+    container.listen(scanViewModelProvider, (_, _) {});
+    await container.read(scanViewModelProvider.notifier).open();
+    await readTag('04AA11');
+
+    expect(state(), isA<ScanFound>().having((found) => found.rackId, 'rackId', 'rack-1'));
+  });
+
   test('stops reading when the screen is hidden', () async {
     await openScan(FakeNfcService());
 
